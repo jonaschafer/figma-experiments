@@ -4,7 +4,25 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Figma Experiments</title>
+    
+    <!-- Custom Fonts -->
     <style>
+        @font-face {
+            font-family: 'Haas Grot Disp';
+            src: url('./assets/fonts/HaasGrotDisp-55Roman.otf') format('opentype');
+            font-weight: 400;
+            font-style: normal;
+            font-display: swap;
+        }
+        
+        @font-face {
+            font-family: 'PP Mondwest';
+            src: url('./assets/fonts/Mondwest-Regular.woff2') format('woff2');
+            font-weight: 400;
+            font-style: normal;
+            font-display: swap;
+        }
+
         * {
             margin: 0;
             padding: 0;
@@ -12,252 +30,457 @@
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: 'Haas Grot Disp', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #ffdad9;
+            color: #1e1e1e;
             min-height: 100vh;
-            color: white;
+            overflow-x: hidden;
         }
 
         .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 2rem;
-        }
-
-        .header {
-            text-align: center;
-            margin-bottom: 4rem;
-        }
-
-        .header h1 {
-            font-size: 3.5rem;
-            font-weight: 700;
-            margin-bottom: 1rem;
-            background: linear-gradient(45deg, #fff, #f0f0f0);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .header p {
-            font-size: 1.25rem;
-            opacity: 0.9;
-            max-width: 600px;
-            margin: 0 auto;
-            line-height: 1.6;
-        }
-
-        .prototypes-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-            gap: 2rem;
-            margin-bottom: 4rem;
-        }
-
-        .prototype-card {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 16px;
-            padding: 2rem;
-            transition: all 0.3s ease;
-            cursor: pointer;
-            text-decoration: none;
-            color: inherit;
-            display: block;
-        }
-
-        .prototype-card:hover {
-            transform: translateY(-8px);
-            background: rgba(255, 255, 255, 0.15);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-        }
-
-        .prototype-preview {
+            display: flex;
+            flex-direction: column;
             width: 100%;
-            height: 200px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 12px;
-            margin-bottom: 1.5rem;
+            min-height: 100vh;
+        }
+
+        /* Header */
+        .header {
+            padding: 30px 60px 60px 60px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .site-title {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            font-size: 16px;
+            font-weight: 400;
+            line-height: 1.4;
+            letter-spacing: 0.16px;
+            color: #1e1e1e;
+        }
+
+        /* Hero Section */
+        .hero {
+            padding: 36px 60px;
             display: flex;
             align-items: center;
-            justify-content: center;
-            font-size: 3rem;
-            overflow: hidden;
-            position: relative;
+            gap: 10px;
         }
 
-        .prototype-preview img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            border-radius: 12px;
+        .hero-text {
+            font-family: 'PP Mondwest', -apple-system, BlinkMacSystemFont, sans-serif;
+            font-size: 31px;
+            line-height: 1.2;
+            letter-spacing: 0.31px;
+            color: #1e1e1e;
+            width: 747px;
+            max-width: 100%;
         }
 
-        .prototype-preview .icon {
-            font-size: 3rem;
-            opacity: 0.7;
+        /* Carousel Section */
+        .carousel {
+            padding: 50px 60px;
+            overflow-x: auto;
+            overflow-y: visible;
         }
 
-        .prototype-title {
-            font-size: 1.5rem;
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-        }
-
-        .prototype-description {
-            opacity: 0.8;
-            line-height: 1.5;
-            margin-bottom: 1rem;
-        }
-
-        .prototype-tags {
+        .projects-grid {
             display: flex;
-            gap: 0.5rem;
-            flex-wrap: wrap;
+            gap: 10px;
+            min-width: max-content;
+        }
+
+        .project-card {
+            display: flex;
+            flex-direction: column;
+            width: 424px;
+            height: 482px;
+            justify-content: space-between;
+            flex-shrink: 0;
+            text-decoration: none;
+            color: inherit;
+            transition: transform 0.2s ease;
+        }
+
+        .project-card:hover {
+            transform: translateY(-2px);
+        }
+
+        .project-info {
+            display: flex;
+            flex-direction: column;
+            gap: 28px;
+            width: 100%;
+        }
+
+        .project-details {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            width: 100%;
+        }
+
+        .project-title {
+            font-family: 'PP Mondwest', -apple-system, BlinkMacSystemFont, sans-serif;
+            font-size: 31px;
+            line-height: 1.2;
+            letter-spacing: 0.31px;
+            color: #1e1e1e;
+            width: 100%;
+        }
+
+        .project-description {
+            font-family: 'Haas Grot Disp', -apple-system, BlinkMacSystemFont, sans-serif;
+            font-size: 13.4px;
+            line-height: 16.44px;
+            letter-spacing: 0.167px;
+            color: #1e1e1e;
+            width: 100%;
+        }
+
+        .project-tags {
+            display: flex;
+            gap: 6px;
+            align-items: flex-start;
         }
 
         .tag {
-            background: rgba(255, 255, 255, 0.2);
-            padding: 0.25rem 0.75rem;
-            border-radius: 20px;
-            font-size: 0.875rem;
-            border: 1px solid rgba(255, 255, 255, 0.3);
+            background-color: #ffdad9;
+            border: 1px solid #1e1e1e;
+            border-radius: 8px;
+            padding: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
-        .status-badge {
-            position: absolute;
-            top: 1rem;
-            right: 1rem;
-            padding: 0.25rem 0.75rem;
-            border-radius: 20px;
-            font-size: 0.75rem;
-            font-weight: 600;
+        .tag-text {
+            font-family: 'Haas Grot Disp', -apple-system, BlinkMacSystemFont, sans-serif;
+            font-size: 13.4px;
+            line-height: 16.44px;
+            letter-spacing: 0.167px;
+            color: #1e1e1e;
+            white-space: nowrap;
         }
 
-        .status-live {
-            background: #10b981;
-            color: white;
+        .project-preview {
+            background-color: #1e1e1e;
+            opacity: 0.1;
+            border-radius: 10px;
+            height: 283px;
+            width: 100%;
+            flex-shrink: 0;
+            transition: opacity 0.2s ease;
         }
 
-        .status-coming-soon {
-            background: #f59e0b;
-            color: white;
+        .project-card:hover .project-preview {
+            opacity: 0.15;
         }
 
+        /* Footer */
         .footer {
-            text-align: center;
-            opacity: 0.7;
-            margin-top: 4rem;
+            padding: 30px 60px 60px 60px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: auto;
         }
 
-        .footer a {
-            color: white;
-            text-decoration: none;
-            font-weight: 500;
-        }
-
-        .footer a:hover {
+        .github-link {
+            font-family: 'Haas Grot Disp', -apple-system, BlinkMacSystemFont, sans-serif;
+            font-size: 16px;
+            line-height: 1.4;
+            letter-spacing: 0.16px;
+            color: #1e1e1e;
             text-decoration: underline;
+            text-decoration-skip-ink: none;
+            text-underline-position: from-font;
+            cursor: pointer;
         }
 
-        @media (max-width: 768px) {
-            .header h1 {
-                font-size: 2.5rem;
+        .nav-items {
+            display: flex;
+            gap: 30px;
+            align-items: center;
+            justify-content: flex-end;
+        }
+
+        .beam-text {
+            font-family: 'Haas Grot Disp', -apple-system, BlinkMacSystemFont, sans-serif;
+            font-size: 16px;
+            line-height: 1.4;
+            letter-spacing: 0.16px;
+            color: #1e1e1e;
+            white-space: nowrap;
+        }
+
+        /* Responsive Design - Tablet Layout (768px - 1023px) */
+        @media (max-width: 1023px) and (min-width: 768px) {
+            /* Header adjustments for tablet */
+            .header {
+                padding: 30px 40px 60px 40px;
+                gap: 30px;
+                align-items: center;
+                flex-direction: row;
             }
             
-            .prototypes-grid {
-                grid-template-columns: 1fr;
+            /* Hero section adjustments */
+            .hero {
+                padding: 16px 40px;
             }
             
-            .container {
-                padding: 1rem;
+            .hero-text {
+                flex-grow: 1;
+                flex-basis: 0;
+                min-width: 0;
             }
+            
+            /* Carousel - vertical stacking for tablet */
+            .carousel {
+                padding: 30px 40px;
+                overflow-x: visible;
+            }
+            
+            .projects-grid {
+                flex-direction: column;
+                gap: 40px;
+                width: 100%;
+                min-width: auto;
+            }
+            
+            .project-card {
+                width: 100%;
+                height: auto;
+                flex-direction: column;
+                gap: 30px;
+            }
+            
+            .project-info {
+                width: 308px;
+                max-width: 100%;
+            }
+            
+            .project-preview {
+                height: 573px;
+                width: 100%;
+            }
+            
+            /* Footer maintains desktop padding on tablet */
+            .footer {
+                padding: 30px 60px 60px 60px;
+            }
+        }
+
+        /* Mobile Layout (below 768px) - Exact Figma Match */
+        @media (max-width: 767px) {
+            /* Header - exact mobile spacing */
+            .header {
+                padding: 30px 20px 60px 20px;
+                gap: 10px;
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            /* Hero - mobile font size and padding */
+            .hero {
+                padding: 16px 20px;
+            }
+            
+            .hero-text {
+                font-size: 20px;
+                letter-spacing: 0.2px;
+                width: 100%;
+                flex-grow: 1;
+                flex-basis: 0;
+                min-width: 0;
+            }
+            
+            /* Carousel - mobile padding */
+            .carousel {
+                padding: 30px 20px;
+                overflow-x: visible;
+            }
+            
+            .projects-grid {
+                flex-direction: column;
+                gap: 40px;
+                width: 100%;
+                min-width: auto;
+            }
+            
+            .project-card {
+                width: 100%;
+                height: auto;
+                flex-direction: column;
+                gap: 30px;
+            }
+            
+            .project-info {
+                width: 308px;
+                max-width: 100%;
+            }
+            
+            .project-preview {
+                height: 279px;
+                width: 100%;
+            }
+            
+            /* Footer - centered column layout for mobile */
+            .footer {
+                flex-direction: column;
+                gap: 30px;
+                align-items: center;
+                justify-content: center;
+                padding: 30px 60px 60px 60px;
+            }
+            
+            .nav-items {
+                justify-content: center;
+            }
+        }
+
+        /* Smooth scrolling */
+        .carousel {
+            scroll-behavior: smooth;
+        }
+
+        /* Custom scrollbar for webkit browsers */
+        .carousel::-webkit-scrollbar {
+            height: 8px;
+        }
+
+        .carousel::-webkit-scrollbar-track {
+            background: rgba(30, 30, 30, 0.1);
+            border-radius: 4px;
+        }
+
+        .carousel::-webkit-scrollbar-thumb {
+            background: rgba(30, 30, 30, 0.3);
+            border-radius: 4px;
+        }
+
+        .carousel::-webkit-scrollbar-thumb:hover {
+            background: rgba(30, 30, 30, 0.5);
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <header class="header">
-            <h1>Figma Experiments</h1>
-            <p>Interactive prototypes and UI experiments built from Figma designs. Exploring micro-interactions, animations, and delightful user experiences.</p>
-        </header>
-
-        <div class="prototypes-grid">
-            
-            <!-- Mouse Repel Prototype -->
-            <a href="./prototypes/mouse-repel/" class="prototype-card">
-                <div class="prototype-preview">
-                    <div class="status-badge status-live">Live</div>
-                    <div class="icon">🎯</div>
-                </div>
-                <h3 class="prototype-title">Mouse Repelling Elements</h3>
-                <p class="prototype-description">
-                    Photos and message pills that subtly move away from your cursor while maintaining collective drift movement. Perfect for creating playful, interactive layouts.
-                </p>
-                <div class="prototype-tags">
-                    <span class="tag">Mouse Interaction</span>
-                    <span class="tag">Micro-animation</span>
-                    <span class="tag">ClassDojo</span>
-                </div>
-            </a>
-
-            <!-- Placeholder for next prototype -->
-            <a href="#" class="prototype-card" style="opacity: 0.6; cursor: not-allowed;">
-                <div class="prototype-preview">
-                    <div class="status-badge status-coming-soon">Coming Soon</div>
-                    <div class="icon">✨</div>
-                </div>
-                <h3 class="prototype-title">Hover Reveal Effects</h3>
-                <p class="prototype-description">
-                    Elegant hover states that reveal hidden content with smooth transitions and delightful animations.
-                </p>
-                <div class="prototype-tags">
-                    <span class="tag">Hover Effects</span>
-                    <span class="tag">CSS Transitions</span>
-                    <span class="tag">UI Polish</span>
-                </div>
-            </a>
-
-            <!-- Placeholder for future prototype -->
-            <a href="#" class="prototype-card" style="opacity: 0.6; cursor: not-allowed;">
-                <div class="prototype-preview">
-                    <div class="status-badge status-coming-soon">Coming Soon</div>
-                    <div class="icon">🌊</div>
-                </div>
-                <h3 class="prototype-title">Fluid Animations</h3>
-                <p class="prototype-description">
-                    Smooth, physics-based animations that respond to user input with natural easing and momentum.
-                </p>
-                <div class="prototype-tags">
-                    <span class="tag">Physics</span>
-                    <span class="tag">Fluid Motion</span>
-                    <span class="tag">Advanced</span>
-                </div>
-            </a>
-
+        <!-- Header -->
+        <div class="header">
+            <p class="site-title">Figma Experiments</p>
         </div>
 
-        <footer class="footer">
-            <p>Built with ❤️ for exploring Figma-to-code workflows • <a href="https://github.com/YOUR_USERNAME/figma-experiments">View on GitHub</a></p>
-        </footer>
+        <!-- Hero Section -->
+        <div class="hero">
+            <p class="hero-text">A lil' collection of interactive prototypes and UI experiments built with Figma MCP and Claude. 🤘</p>
+        </div>
+
+        <!-- Carousel Section -->
+        <div class="carousel">
+            <div class="projects-grid">
+                
+                <!-- Mouse Repel Project -->
+                <a href="./prototypes/mouse-repel/" class="project-card">
+                    <div class="project-info">
+                        <div class="project-details">
+                            <p class="project-title">Mouse repel</p>
+                            <p class="project-description">Photos and message pills that subtly move away from your cursor while maintaining collective drift movement. Perfect for creating playful, interactive layouts.</p>
+                        </div>
+                        <div class="project-tags">
+                            <div class="tag">
+                                <p class="tag-text">Sep 2025</p>
+                            </div>
+                            <div class="tag">
+                                <p class="tag-text">ClassDojo</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="project-preview"></div>
+                </a>
+
+                <!-- Listening Cafe Project -->
+                <a href="#" class="project-card" style="opacity: 0.7; cursor: not-allowed;">
+                    <div class="project-info">
+                        <div class="project-details">
+                            <p class="project-title">Listening cafe</p>
+                            <p class="project-description">Convert streaming music URLs like Spotify, Tidal, etc, into realistic LP covers on a wall, as if you're in a listening cafe.</p>
+                        </div>
+                        <div class="project-tags">
+                            <div class="tag">
+                                <p class="tag-text">Sep 2025</p>
+                            </div>
+                            <div class="tag">
+                                <p class="tag-text">Music</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="project-preview"></div>
+                </a>
+
+                <!-- TBD Project -->
+                <a href="#" class="project-card" style="opacity: 0.7; cursor: not-allowed;">
+                    <div class="project-info">
+                        <div class="project-details">
+                            <p class="project-title">TBD</p>
+                            <p class="project-description">Placeholder description text.</p>
+                        </div>
+                        <div class="project-tags">
+                            <div class="tag">
+                                <p class="tag-text">TBD</p>
+                            </div>
+                            <div class="tag">
+                                <p class="tag-text">TBD</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="project-preview"></div>
+                </a>
+
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <a href="https://github.com/YOUR_USERNAME/figma-experiments" class="github-link">View on GitHub</a>
+            <div class="nav-items">
+                <p class="beam-text">Beam me up, Scotty ↑</p>
+            </div>
+        </div>
     </div>
 
     <script>
-        // Add some subtle animation to cards on load
+        // Add smooth interactions
         document.addEventListener('DOMContentLoaded', () => {
-            const cards = document.querySelectorAll('.prototype-card');
-            cards.forEach((card, index) => {
-                setTimeout(() => {
-                    card.style.opacity = '0';
-                    card.style.transform = 'translateY(20px)';
-                    card.style.transition = 'all 0.6s ease';
-                    
-                    setTimeout(() => {
-                        card.style.opacity = '1';
-                        card.style.transform = 'translateY(0)';
-                    }, 100);
-                }, index * 150);
+            // Add subtle hover effects to project cards
+            const projectCards = document.querySelectorAll('.project-card');
+            
+            projectCards.forEach(card => {
+                card.addEventListener('mouseenter', () => {
+                    if (!card.style.cursor.includes('not-allowed')) {
+                        card.style.transform = 'translateY(-2px)';
+                    }
+                });
+                
+                card.addEventListener('mouseleave', () => {
+                    card.style.transform = 'translateY(0)';
+                });
+            });
+
+            // Smooth scroll behavior for carousel on mobile
+            const carousel = document.querySelector('.carousel');
+            let isScrolling = false;
+            
+            carousel.addEventListener('scroll', () => {
+                if (!isScrolling) {
+                    window.requestAnimationFrame(() => {
+                        // Add any scroll-based effects here if needed
+                        isScrolling = false;
+                    });
+                    isScrolling = true;
+                }
             });
         });
     </script>

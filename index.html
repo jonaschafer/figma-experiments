@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Figma Experiments</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: white;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+
+        .header h1 {
+            font-size: 3.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            background: linear-gradient(45deg, #fff, #f0f0f0);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .header p {
+            font-size: 1.25rem;
+            opacity: 0.9;
+            max-width: 600px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+
+        .prototypes-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-bottom: 4rem;
+        }
+
+        .prototype-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 16px;
+            padding: 2rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            text-decoration: none;
+            color: inherit;
+            display: block;
+        }
+
+        .prototype-card:hover {
+            transform: translateY(-8px);
+            background: rgba(255, 255, 255, 0.15);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .prototype-preview {
+            width: 100%;
+            height: 200px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .prototype-preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 12px;
+        }
+
+        .prototype-preview .icon {
+            font-size: 3rem;
+            opacity: 0.7;
+        }
+
+        .prototype-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .prototype-description {
+            opacity: 0.8;
+            line-height: 1.5;
+            margin-bottom: 1rem;
+        }
+
+        .prototype-tags {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .tag {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.875rem;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .status-badge {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .status-live {
+            background: #10b981;
+            color: white;
+        }
+
+        .status-coming-soon {
+            background: #f59e0b;
+            color: white;
+        }
+
+        .footer {
+            text-align: center;
+            opacity: 0.7;
+            margin-top: 4rem;
+        }
+
+        .footer a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2.5rem;
+            }
+            
+            .prototypes-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .container {
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1>Figma Experiments</h1>
+            <p>Interactive prototypes and UI experiments built from Figma designs. Exploring micro-interactions, animations, and delightful user experiences.</p>
+        </header>
+
+        <div class="prototypes-grid">
+            
+            <!-- Mouse Repel Prototype -->
+            <a href="./prototypes/mouse-repel/" class="prototype-card">
+                <div class="prototype-preview">
+                    <div class="status-badge status-live">Live</div>
+                    <div class="icon">🎯</div>
+                </div>
+                <h3 class="prototype-title">Mouse Repelling Elements</h3>
+                <p class="prototype-description">
+                    Photos and message pills that subtly move away from your cursor while maintaining collective drift movement. Perfect for creating playful, interactive layouts.
+                </p>
+                <div class="prototype-tags">
+                    <span class="tag">Mouse Interaction</span>
+                    <span class="tag">Micro-animation</span>
+                    <span class="tag">ClassDojo</span>
+                </div>
+            </a>
+
+            <!-- Placeholder for next prototype -->
+            <a href="#" class="prototype-card" style="opacity: 0.6; cursor: not-allowed;">
+                <div class="prototype-preview">
+                    <div class="status-badge status-coming-soon">Coming Soon</div>
+                    <div class="icon">✨</div>
+                </div>
+                <h3 class="prototype-title">Hover Reveal Effects</h3>
+                <p class="prototype-description">
+                    Elegant hover states that reveal hidden content with smooth transitions and delightful animations.
+                </p>
+                <div class="prototype-tags">
+                    <span class="tag">Hover Effects</span>
+                    <span class="tag">CSS Transitions</span>
+                    <span class="tag">UI Polish</span>
+                </div>
+            </a>
+
+            <!-- Placeholder for future prototype -->
+            <a href="#" class="prototype-card" style="opacity: 0.6; cursor: not-allowed;">
+                <div class="prototype-preview">
+                    <div class="status-badge status-coming-soon">Coming Soon</div>
+                    <div class="icon">🌊</div>
+                </div>
+                <h3 class="prototype-title">Fluid Animations</h3>
+                <p class="prototype-description">
+                    Smooth, physics-based animations that respond to user input with natural easing and momentum.
+                </p>
+                <div class="prototype-tags">
+                    <span class="tag">Physics</span>
+                    <span class="tag">Fluid Motion</span>
+                    <span class="tag">Advanced</span>
+                </div>
+            </a>
+
+        </div>
+
+        <footer class="footer">
+            <p>Built with ❤️ for exploring Figma-to-code workflows • <a href="https://github.com/YOUR_USERNAME/figma-experiments">View on GitHub</a></p>
+        </footer>
+    </div>
+
+    <script>
+        // Add some subtle animation to cards on load
+        document.addEventListener('DOMContentLoaded', () => {
+            const cards = document.querySelectorAll('.prototype-card');
+            cards.forEach((card, index) => {
+                setTimeout(() => {
+                    card.style.opacity = '0';
+                    card.style.transform = 'translateY(20px)';
+                    card.style.transition = 'all 0.6s ease';
+                    
+                    setTimeout(() => {
+                        card.style.opacity = '1';
+                        card.style.transform = 'translateY(0)';
+                    }, 100);
+                }, index * 150);
+            });
+        });
+    </script>
+</body>
+</html>

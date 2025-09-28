@@ -3,8 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mouse Repel Prototype - Exact Figma Match</title>
+    <title>Mouse Repel - Figma Experiments</title>
+    
+    <!-- Custom Fonts -->
     <style>
+        @font-face {
+            font-family: 'Haas Grot Disp';
+            src: url('../../assets/fonts/HaasGrotDisp-55Roman.otf') format('opentype');
+            font-weight: 400;
+            font-style: normal;
+            font-display: swap;
+        }
+        
+        @font-face {
+            font-family: 'PP Mondwest';
+            src: url('../../assets/fonts/Mondwest-Regular.woff2') format('woff2');
+            font-weight: 400;
+            font-style: normal;
+            font-display: swap;
+        }
+
         * {
             margin: 0;
             padding: 0;
@@ -12,53 +30,72 @@
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            font-family: 'Haas Grot Disp', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             background-color: #ffffff;
             overflow: hidden;
             height: 100vh;
             width: 100vw;
         }
 
-        .container {
-            position: relative;
-            width: 1440px; /* Figma desktop width */
-            height: 900px;  /* Figma desktop height */
-            margin: 0 auto;
-            background-color: #ffffff;
-        }
-
-        .nav {
+        .page-container {
             display: flex;
+            flex-direction: column;
+            height: 100vh;
+            width: 100vw;
+        }
+
+        /* Navigation Styles */
+        .prototype-nav {
+            background-color: #f8db79;
+            padding: 30px 60px 60px 60px;
+            display: flex;
+            align-items: flex-end;
             justify-content: space-between;
-            align-items: center;
-            padding: 1rem 2rem;
-            background-color: #f8f9fa;
-            border-bottom: 1px solid #e9ecef;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            z-index: 1000;
+            color: #1e1e1e;
+            white-space: nowrap;
+            width: 100%;
+            flex-shrink: 0;
         }
 
-        .nav h1 {
-            font-size: 1.5rem;
-            color: #333;
-            font-weight: 600;
+        .prototype-nav .prototype-title {
+            font-family: 'PP Mondwest', -apple-system, BlinkMacSystemFont, sans-serif;
+            font-size: 31px;
+            line-height: 1.2;
+            letter-spacing: 0.31px;
+            color: #1e1e1e;
+            margin: 0;
         }
 
+        .prototype-nav .back-link {
+            font-family: 'Haas Grot Disp', -apple-system, BlinkMacSystemFont, sans-serif;
+            font-size: 16px;
+            line-height: 1.4;
+            letter-spacing: 0.16px;
+            color: #1e1e1e;
+            text-decoration: none;
+            cursor: pointer;
+            transition: opacity 0.2s ease;
+        }
+
+        .prototype-nav .back-link:hover {
+            opacity: 0.7;
+        }
+
+        /* Main Content Container */
         .main-container {
             position: relative;
+            flex: 1;
             width: 100%;
-            height: 100vh;
-            padding-top: 80px; /* Account for fixed nav */
+            height: 100%;
+            overflow: hidden;
+            background-color: #f9fafb;
         }
 
         /* Fixed centered text - matches Figma exactly */
         .fixed-text {
             position: absolute;
             left: 396px;
-            top: calc(50% + 32px - 40px); /* Adjust for nav */
+            top: calc(50% + 32px);
             width: 648px;
             transform: translateY(-50%);
             text-align: center;
@@ -157,15 +194,54 @@
         .pill-3 { left: 111px; top: 306px; }
         .pill-4 { left: 1045px; top: 654px; }
         .pill-5 { left: 518px; top: 133px; }
+
+        /* Responsive adjustments */
+        @media (max-width: 1023px) and (min-width: 768px) {
+            .prototype-nav {
+                padding: 30px 40px 60px 40px;
+            }
+        }
+
+        @media (max-width: 767px) {
+            .prototype-nav {
+                padding: 30px 20px 60px 20px;
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 20px;
+            }
+            
+            .prototype-nav .prototype-title {
+                font-size: 24px;
+            }
+
+            .fixed-text {
+                left: 50%;
+                transform: translate(-50%, -50%);
+                width: 90%;
+                top: 50%;
+            }
+
+            .fixed-text h1 {
+                font-size: 2rem;
+            }
+
+            /* Adjust element positions for mobile */
+            .photo-1, .photo-2, .photo-3, .photo-4, .photo-5, .photo-6 {
+                width: 120px;
+                height: 120px;
+            }
+        }
     </style>
 </head>
 <body>
-    <nav class="nav">
-        <h1>UI Prototype Lab</h1>
-        <span>Mouse Repelling Elements - Exact Figma Match</span>
-    </nav>
+    <div class="page-container">
+        <!-- Navigation -->
+        <nav class="prototype-nav">
+            <h1 class="prototype-title">Mouse Repel</h1>
+            <a href="../../" class="back-link">← Back</a>
+        </nav>
 
-    <div class="container">
+        <!-- Main Content -->
         <div class="main-container">
             
             <!-- Fixed centered text -->
@@ -176,11 +252,12 @@
                     One app.
                 </h1>
                 <p>
-                    ClassDojo helps your school community communicate, share, and support student learning, whether it's a message home, a classroom update, or a quick check-in.
+                    ClassDojo helps your school community communicate, share, and support student learning, 
+                    whether it's a message home, a classroom update, or a quick check-in.
                 </p>
             </div>
 
-            <!-- Photos with exact Figma positioning -->
+            <!-- Repelling Photos -->
             <div class="repel-element photo photo-1">
                 <img src="./images/photo1.png" alt="Student photo" onerror="this.src='https://images.unsplash.com/photo-1544717297-fa95b6ee9643?w=300&h=300&fit=crop'">
             </div>
@@ -205,7 +282,7 @@
                 <img src="./images/photo6.png" alt="Student photo" onerror="this.src='https://images.unsplash.com/photo-1581833971358-2c8b550f87b3?w=300&h=300&fit=crop'">
             </div>
 
-            <!-- Message pills with exact Figma positioning -->
+            <!-- Repelling Message Pills -->
             <div class="repel-element message-pill pill-1">
                 <div class="avatar">
                     <img src="./images/avatar1.png" alt="Avatar" onerror="this.src='https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=32&h=32&fit=crop&crop=face'">

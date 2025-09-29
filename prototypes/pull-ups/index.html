@@ -716,14 +716,15 @@
             try {
                 await fetch(webhookUrl, {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json', 'X-Pullups-Secret': webhookSecret || '' },
+                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         date: attempt.date || new Date().toISOString(),
                         stepId: step.id,
                         stepTitle: step.title,
                         value: attempt.value,
                         unit: step.unit,
-                        note: attempt.note || ''
+                        note: attempt.note || '',
+                        secret: webhookSecret || ''
                     })
                 });
             } catch (e) {

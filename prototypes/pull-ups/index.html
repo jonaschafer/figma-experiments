@@ -410,6 +410,10 @@
                 <strong>Overall Progress</strong>
                 <span id="progress-text">0/5 steps completed</span>
             </div>
+            <div style="display: flex; gap: 8px; justify-content: flex-end; margin-bottom: 8px; flex-wrap: wrap;">
+                <button class="secondary" onclick="configureSheetsWebhook()">Configure Google Sheets</button>
+                <button class="secondary" onclick="configureSecretToken()">Set Secret</button>
+            </div>
             <div class="progress-bar">
                 <div class="progress-fill" id="progress-fill" style="width: 0%"></div>
             </div>
@@ -591,13 +595,19 @@
                         ${!locked ? `
                             <div class="input-group">
                                 <input type="number" id="input-${step.id}" placeholder="Enter ${step.unit}" min="0">
+                                <input type="text" id="note-${step.id}" placeholder="Add a note (optional)" style="flex: 2; padding: 8px 12px; border: 2px solid black; border-radius: 4px; font-size: 16px;">
                                 <button onclick="logAttempt('${step.id}')">Log Attempt</button>
                             </div>
                         ` : ''}
                         
                         ${step.attempts.length > 0 ? `
                             <div class="attempts-list">
-                                <strong>Recent attempts:</strong> ${step.attempts.slice(-5).reverse().map(a => `<span>${a}</span>`).join('')}
+                                <strong>Recent attempts:</strong> ${step.attempts.slice(-5).reverse().map(a => {
+                                    const attempt = (typeof a === 'object' && a !== null) ? a : { value: a };
+                                    const note = attempt.note ? ` — ${attempt.note}` : '';
+                                    const date = attempt.date ? ` (${new Date(attempt.date).toLocaleDateString()})` : '';
+                                    return `<span>${attempt.value}${note}${date}</span>`;
+                                }).join('')}
                             </div>
                         ` : ''}
                     </div>
@@ -605,8 +615,9 @@
             }).join('');
         }
 
-        function logAttempt(stepId) {
+        async function logAttempt(stepId) {
             const input = document.getElementById(`input-${stepId}`);
+            const noteInput = document.getElementById(`note-${stepId}`);
             const value = parseFloat(input.value);
             
             if (!value || value <= 0) {
@@ -617,7 +628,9 @@
             const stepIndex = steps.findIndex(s => s.id === stepId);
             const step = steps[stepIndex];
             
-            step.attempts.push(value);
+            // Ensure attempts stored as objects
+            const attempt = { value, note: noteInput ? (noteInput.value || '') : '', date: new Date().toISOString() };
+            step.attempts.push(attempt);
             step.bestAttempt = Math.max(step.bestAttempt, value);
             
             if (value >= step.targetValue && !step.completed) {
@@ -630,8 +643,111 @@
             }
             
             saveData();
+            // Append to log file if enabled
+            // Also POST to webhook if configured
+            try {
+                await postAttemptToWebhook(step, attempt);
+            } catch (e) {}
             render();
             input.value = '';
+            if (noteInput) noteInput.value = '';
+        }
+
+        // Google Sheets webhook
+        let webhookUrl = null;
+        let webhookSecret = null;
+
+        function loadWebhook() {
+            webhookUrl = localStorage.getItem('pullup-webhook-url') || null;
+        }
+
+        function saveWebhook(url) {
+            if (url) {
+                localStorage.setItem('pullup-webhook-url', url);
+            } else {
+                localStorage.removeItem('pullup-webhook-url');
+            }
+            webhookUrl = url || null;
+        }
+
+        function loadSecret() {
+            webhookSecret = localStorage.getItem('pullup-webhook-secret') || null;
+        }
+
+        function saveSecret(secret) {
+            if (secret) {
+                localStorage.setItem('pullup-webhook-secret', secret);
+            } else {
+                localStorage.removeItem('pullup-webhook-secret');
+            }
+            webhookSecret = secret || null;
+        }
+
+        function configureSecretToken() {
+            const current = localStorage.getItem('pullup-webhook-secret') || '';
+            const input = prompt('Set a secret token (leave blank to clear):', current);
+            if (input === null) return;
+            const trimmed = input.trim();
+            if (trimmed === '') {
+                saveSecret(null);
+                alert('Secret cleared.');
+                return;
+            }
+            saveSecret(trimmed);
+            alert('Secret saved. Your webhook will include this token.');
+        }
+
+        function configureSheetsWebhook() {
+            const current = localStorage.getItem('pullup-webhook-url') || '';
+            const input = prompt('Paste your Google Apps Script Web App URL (leave blank to disable):', current);
+            if (input === null) return; // cancelled
+            const trimmed = input.trim();
+            if (trimmed === '') {
+                saveWebhook(null);
+                alert('Google Sheets logging disabled.');
+                return;
+            }
+            saveWebhook(trimmed);
+            alert('Google Sheets logging enabled. New attempts will be sent.');
+        }
+
+        async function postAttemptToWebhook(step, attempt) {
+            if (!webhookUrl) return;
+            try {
+                await fetch(webhookUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'X-Pullups-Secret': webhookSecret || '' },
+                    body: JSON.stringify({
+                        date: attempt.date || new Date().toISOString(),
+                        stepId: step.id,
+                        stepTitle: step.title,
+                        value: attempt.value,
+                        unit: step.unit,
+                        note: attempt.note || ''
+                    })
+                });
+            } catch (e) {
+                // ignore network errors
+            }
+        }
+
+        // Data migration to support attempt objects with notes and dates
+        function migrateAttemptsIfNeeded() {
+            let migrated = false;
+            steps.forEach(step => {
+                if (Array.isArray(step.attempts)) {
+                    for (let i = 0; i < step.attempts.length; i++) {
+                        const a = step.attempts[i];
+                        if (typeof a !== 'object' || a === null || !('value' in a)) {
+                            step.attempts[i] = { value: a, note: '', date: new Date().toISOString() };
+                            migrated = true;
+                        }
+                    }
+                }
+            });
+            if (migrated) {
+                saveData();
+            }
         }
 
         function showCelebration() {
@@ -657,6 +773,9 @@
 
         // Initialize
         loadData();
+        loadWebhook();
+        loadSecret();
+        migrateAttemptsIfNeeded();
         render();
     </script>
 </body>

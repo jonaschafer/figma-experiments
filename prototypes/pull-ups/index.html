@@ -410,10 +410,6 @@
                 <strong>Overall Progress</strong>
                 <span id="progress-text">0/5 steps completed</span>
             </div>
-            <div style="display: flex; gap: 8px; justify-content: flex-end; margin-bottom: 8px; flex-wrap: wrap;">
-                <button class="secondary" onclick="configureSheetsWebhook()">Configure Google Sheets</button>
-                <button class="secondary" onclick="configureSecretToken()">Set Secret</button>
-            </div>
             <div class="progress-bar">
                 <div class="progress-fill" id="progress-fill" style="width: 0%"></div>
             </div>
@@ -644,93 +640,11 @@
             
             saveData();
             // Append to log file if enabled
-            // Also POST to webhook if configured
-            try {
-                await postAttemptToWebhook(step, attempt);
-            } catch (e) {}
             render();
             input.value = '';
             if (noteInput) noteInput.value = '';
         }
 
-        // Google Sheets webhook
-        let webhookUrl = null;
-        let webhookSecret = null;
-
-        function loadWebhook() {
-            webhookUrl = localStorage.getItem('pullup-webhook-url') || null;
-        }
-
-        function saveWebhook(url) {
-            if (url) {
-                localStorage.setItem('pullup-webhook-url', url);
-            } else {
-                localStorage.removeItem('pullup-webhook-url');
-            }
-            webhookUrl = url || null;
-        }
-
-        function loadSecret() {
-            webhookSecret = localStorage.getItem('pullup-webhook-secret') || null;
-        }
-
-        function saveSecret(secret) {
-            if (secret) {
-                localStorage.setItem('pullup-webhook-secret', secret);
-            } else {
-                localStorage.removeItem('pullup-webhook-secret');
-            }
-            webhookSecret = secret || null;
-        }
-
-        function configureSecretToken() {
-            const current = localStorage.getItem('pullup-webhook-secret') || '';
-            const input = prompt('Set a secret token (leave blank to clear):', current);
-            if (input === null) return;
-            const trimmed = input.trim();
-            if (trimmed === '') {
-                saveSecret(null);
-                alert('Secret cleared.');
-                return;
-            }
-            saveSecret(trimmed);
-            alert('Secret saved. Your webhook will include this token.');
-        }
-
-        function configureSheetsWebhook() {
-            const current = localStorage.getItem('pullup-webhook-url') || '';
-            const input = prompt('Paste your Google Apps Script Web App URL (leave blank to disable):', current);
-            if (input === null) return; // cancelled
-            const trimmed = input.trim();
-            if (trimmed === '') {
-                saveWebhook(null);
-                alert('Google Sheets logging disabled.');
-                return;
-            }
-            saveWebhook(trimmed);
-            alert('Google Sheets logging enabled. New attempts will be sent.');
-        }
-
-        async function postAttemptToWebhook(step, attempt) {
-            if (!webhookUrl) return;
-            try {
-                await fetch(webhookUrl, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        date: attempt.date || new Date().toISOString(),
-                        stepId: step.id,
-                        stepTitle: step.title,
-                        value: attempt.value,
-                        unit: step.unit,
-                        note: attempt.note || '',
-                        secret: webhookSecret || ''
-                    })
-                });
-            } catch (e) {
-                // ignore network errors
-            }
-        }
 
         // Data migration to support attempt objects with notes and dates
         function migrateAttemptsIfNeeded() {
@@ -774,8 +688,6 @@
 
         // Initialize
         loadData();
-        loadWebhook();
-        loadSecret();
         migrateAttemptsIfNeeded();
         render();
     </script>

@@ -409,56 +409,56 @@
                 name: 'Hang',
                 sets: 3,
                 reps: '30 seconds',
-                videoSrc: './video/1002-1.mp4'
+                videoSrc: '/prototypes/pull-ups/v2/video/1002-1.mp4'
             },
             {
                 id: 2,
                 name: 'Scapular Pull-ups',
                 sets: 3,
                 reps: '15',
-                videoSrc: './video/1002-2.mp4'
+                videoSrc: '/prototypes/pull-ups/v2/video/1002-2.mp4'
             },
             {
                 id: 3,
                 name: 'Inverted Rows',
                 sets: 3,
                 reps: '10',
-                videoSrc: './video/1002-3.mp4'
+                videoSrc: '/prototypes/pull-ups/v2/video/1002-3.mp4'
             },
             {
                 id: 4,
                 name: 'Jacknife Pull-ups',
                 sets: 3,
                 reps: '10',
-                videoSrc: './video/1002-4.mp4'
+                videoSrc: '/prototypes/pull-ups/v2/video/1002-4.mp4'
             },
             {
                 id: 5,
                 name: 'Band-Assisted Pull-ups',
                 sets: 3,
                 reps: '10',
-                videoSrc: './video/1002-5.mp4'
+                videoSrc: '/prototypes/pull-ups/v2/video/1002-5.mp4'
             },
             {
                 id: 6,
                 name: 'Top-Hold',
                 sets: 3,
                 reps: '30 seconds',
-                videoSrc: './video/1002-6.mp4'
+                videoSrc: '/prototypes/pull-ups/v2/video/1002-6.mp4'
             },
             {
                 id: 7,
                 name: 'Negatives',
                 sets: 3,
                 reps: '5 seconds',
-                videoSrc: './video/1002-7.mp4'
+                videoSrc: '/prototypes/pull-ups/v2/video/1002-7.mp4'
             },
             {
                 id: 8,
                 name: 'Pull-ups',
                 sets: 3,
                 reps: '1',
-                videoSrc: './video/1002-8.mp4'
+                videoSrc: '/prototypes/pull-ups/v2/video/1002-8.mp4'
             }
         ];
 
@@ -510,9 +510,9 @@
                         <h2 class="brutalist-title exercise-name">${exercise.name}</h2>
 
                         <div class="video-container">
-                            <video controls playsInline>
+                            <video controls playsInline preload="metadata">
                                 <source src="${exercise.videoSrc}" type="video/mp4">
-                                Your browser does not support the video tag.
+                                <p>Your browser does not support the video tag.</p>
                             </video>
                         </div>
 

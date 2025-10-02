@@ -96,12 +96,16 @@
             display: flex;
             flex-direction: column;
             width: 424px;
-            height: 482px;
-            justify-content: space-between;
+            height: 230px;
             flex-shrink: 0;
             text-decoration: none;
             color: inherit;
             transition: transform 0.2s ease;
+            border: 1px solid #1e1e1e;
+            border-radius: 20px;
+            padding: 30px 30px 20px 30px;
+            justify-content: space-between;
+            position: relative;
         }
 
         .project-card:hover {
@@ -113,6 +117,7 @@
             flex-direction: column;
             gap: 28px;
             width: 100%;
+            flex-grow: 1;
         }
 
         .project-details {
@@ -124,9 +129,9 @@
 
         .project-title {
             font-family: 'PP Mondwest', -apple-system, BlinkMacSystemFont, sans-serif;
-            font-size: 31px;
+            font-size: 24px;
             line-height: 1.2;
-            letter-spacing: 0.31px;
+            letter-spacing: 0.24px;
             color: #1e1e1e;
             width: 100%;
         }
@@ -142,7 +147,7 @@
 
         .project-tags {
             display: flex;
-            gap: 6px;
+            gap: 4px;
             align-items: flex-start;
         }
 
@@ -166,45 +171,12 @@
         }
 
         .project-preview {
-            background-color: #1e1e1e;
-            opacity: 0.1;
-            border-radius: 10px;
-            height: 283px;
-            width: 100%;
-            flex-shrink: 0;
-            transition: opacity 0.2s ease;
-            position: relative;
-            overflow: hidden;
+            display: none;
         }
 
-        .project-preview img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            border-radius: 10px;
-            opacity: 1;
-        }
-
-        .project-preview.has-image {
-            background-color: transparent;
-            opacity: 1;
-        }
-
-        .project-card:hover .project-preview {
-            opacity: 0.15;
-        }
-
-        .project-card:hover .project-preview.has-image {
-            opacity: 1;
-        }
-
-        /* Footer */
+        /* Footer - Hidden */
         .footer {
-            padding: 30px 60px 60px 60px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-top: auto;
+            display: none;
         }
 
         .github-link {
@@ -416,15 +388,12 @@
                         </div>
                         <div class="project-tags">
                             <div class="tag">
-                                <p class="tag-text">Sep 2025</p>
+                                <p class="tag-text">HTML/CSS</p>
                             </div>
                             <div class="tag">
-                                <p class="tag-text">ClassDojo</p>
+                                <p class="tag-text">JavaScript</p>
                             </div>
                         </div>
-                    </div>
-                    <div class="project-preview has-image">
-                        <img src="./assets/shared-images/mouse-repel.jpg" alt="Mouse Repel prototype preview" loading="lazy">
                     </div>
                 </a>
 
@@ -434,7 +403,7 @@
                 <a href="./prototypes/pull-ups/v2" class="project-card">
                     <div class="project-info">
                         <div class="project-details">
-                            <p class="project-title">Pull-up Mastery</p>
+                            <p class="project-title">Get yer first pull-up</p>
                             <p class="project-description">He owns two pull up bars. Isn't time he can do a pull up? Let's find out.</p>
                         </div>
                         <div class="project-tags">
@@ -442,32 +411,28 @@
                                 <p class="tag-text">Figma Make</p>
                             </div>
                             <div class="tag">
-                                <p class="tag-text">No design</p>
+                                <p class="tag-text">React</p>
                             </div>
                         </div>
-                    </div>
-                    <div class="project-preview has-image">
-                        <img src="./assets/shared-images/pull-up-preview.jpg" alt="Pull-up Tracker prototype preview" loading="lazy">
                     </div>
                 </a>
 
-                <!-- Listening Cafe Project -->
-                <a href="#" class="project-card" style="opacity: 0.7; cursor: not-allowed;">
+                <!-- Wall of Sound Project -->
+                <a href="http://localhost:3000" class="project-card" target="_blank">
                     <div class="project-info">
                         <div class="project-details">
-                            <p class="project-title">Listening cafe</p>
-                            <p class="project-description">Convert streaming music URLs like Spotify, Tidal, etc, into realistic LP covers on a wall, as if you're in a listening cafe.</p>
+                            <p class="project-title">Wall of Sound</p>
+                            <p class="project-description">A personal music collection built with Next.js and Supabase. Add tracks from Spotify, play previews, and discover new music through a curated wall of album covers.</p>
                         </div>
                         <div class="project-tags">
                             <div class="tag">
-                                <p class="tag-text">Sep 2025</p>
+                                <p class="tag-text">Next.js</p>
                             </div>
                             <div class="tag">
-                                <p class="tag-text">Music</p>
+                                <p class="tag-text">Spotify</p>
                             </div>
                         </div>
                     </div>
-                    <div class="project-preview"></div>
                 </a>
 
             </div>

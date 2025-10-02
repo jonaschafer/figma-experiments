@@ -14,7 +14,7 @@ export default function AlbumCard({ song, onPlay }) {
         <div className="relative mb-4">
           {/* Album Artwork */}
           <div 
-            className="relative bg-white p-1 shadow-lg cursor-pointer"
+            className="relative shadow-lg cursor-pointer"
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
             onClick={() => onPlay(song)}
@@ -55,7 +55,7 @@ export default function AlbumCard({ song, onPlay }) {
         </div>
 
         {/* Track Info */}
-        <div className="flex items-start justify-between gap-2 mt-2">
+        <div className="flex items-start justify-between gap-2 mt-6">
           <div className="flex-1 min-w-0">
             <p className="text-text-dark text-sm font-normal truncate leading-5">
               {song.artist}
@@ -63,22 +63,24 @@ export default function AlbumCard({ song, onPlay }) {
             <p className="text-text-secondary text-xs font-normal truncate leading-4">
               {song.title}
             </p>
-            {song.description && (
-              <p className="text-text-secondary text-xs font-normal mt-1 line-clamp-2 leading-4">
-                {song.description}
-              </p>
-            )}
           </div>
 
-          {/* Find It Button */}
-          <button
-            onClick={() => setShowServices(true)}
-            className="flex-shrink-0 border border-text-dark rounded px-1.5 py-0.5 flex items-center gap-1 hover:bg-text-dark hover:text-primary transition-colors"
-          >
-            <span className="text-text-dark text-[11px] font-medium">Find it</span>
-            <ExternalLink size={13} className="text-text-dark" />
-          </button>
+                {/* Find It Button */}
+                <button
+                  onClick={() => window.open(song.odesli_url, '_blank')}
+                  className="flex-shrink-0 border border-text-dark rounded px-1.5 py-0.5 flex items-center gap-1 hover:bg-text-dark hover:text-primary transition-colors group/button"
+                >
+                  <span className="text-text-dark text-[11px] font-medium group-hover/button:text-primary">Find it</span>
+                  <ExternalLink size={13} className="text-text-dark group-hover/button:text-primary" />
+                </button>
         </div>
+
+        {/* Description - Full Width */}
+        {song.description && (
+          <p className="text-text-secondary text-xs font-normal mt-2 line-clamp-2 leading-4">
+            {song.description}
+          </p>
+        )}
       </div>
 
       {/* Service Links Modal */}

@@ -48,17 +48,160 @@
         .header {
             padding: 30px 60px 60px 60px;
             display: flex;
-            flex-direction: column;
-            gap: 15px;
+            justify-content: space-between;
+            align-items: center;
         }
 
         .site-title {
-            font-family: 'Haas Grot Disp', -apple-system, BlinkMacSystemFont, sans-serif;
+            font-family: 'Inter', sans-serif;
             font-size: 16px;
             font-weight: 400;
             line-height: 1.4;
-            letter-spacing: 0.16px;
             color: #1e1e1e;
+        }
+
+        /* Navigation */
+        .nav-items {
+            display: flex;
+            gap: 30px;
+            align-items: center;
+        }
+
+        .nav-link {
+            font-family: 'Haas Grot Disp', sans-serif;
+            font-size: 16px;
+            font-weight: 400;
+            line-height: 1.4;
+            color: #1e1e1e;
+            text-decoration: none;
+            transition: opacity 0.2s ease;
+        }
+
+        .nav-link:hover {
+            opacity: 0.8;
+        }
+
+        .nav-link.active {
+            font-weight: 700;
+            color: #ffdad9;
+        }
+
+        .nav-link.vibes {
+            border: 1px solid #1e1e1e;
+            border-radius: 20px;
+            padding: 10px 20px;
+            transition: all 0.2s ease;
+        }
+
+        .nav-link.vibes:hover {
+            background-color: #1e1e1e;
+            color: #ffdad9;
+        }
+
+        /* Mobile Navigation */
+        .mobile-menu-button {
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            width: 32px;
+            height: 32px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            gap: 4px;
+        }
+
+        .mobile-menu-line {
+            width: 24px;
+            height: 2px;
+            background-color: #1e1e1e;
+            transition: all 0.2s ease;
+        }
+
+        .mobile-menu-button.open .mobile-menu-line:nth-child(1) {
+            transform: rotate(45deg) translate(5px, 5px);
+        }
+
+        .mobile-menu-button.open .mobile-menu-line:nth-child(2) {
+            opacity: 0;
+        }
+
+        .mobile-menu-button.open .mobile-menu-line:nth-child(3) {
+            transform: rotate(-45deg) translate(7px, -6px);
+        }
+
+        .mobile-menu-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            background-color: #ffdad9;
+            z-index: 50;
+            flex-direction: column;
+            justify-content: flex-start;
+            padding-top: 140px;
+            padding-left: 20px;
+        }
+
+        .mobile-menu-overlay.open {
+            display: flex;
+        }
+
+        .mobile-menu-close {
+            position: absolute;
+            top: 30px;
+            right: 20px;
+            width: 32px;
+            height: 32px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .mobile-menu-close-line {
+            width: 24px;
+            height: 2px;
+            background-color: #1e1e1e;
+            position: absolute;
+        }
+
+        .mobile-menu-close-line:nth-child(1) {
+            transform: rotate(45deg);
+        }
+
+        .mobile-menu-close-line:nth-child(2) {
+            transform: rotate(-45deg);
+        }
+
+        .mobile-nav-items {
+            display: flex;
+            flex-direction: column;
+            gap: 32px;
+        }
+
+        .mobile-nav-link {
+            font-family: 'Haas Grot Disp', sans-serif;
+            font-size: 32px;
+            font-weight: 400;
+            line-height: 1.4;
+            color: #1e1e1e;
+            text-decoration: none;
+            transition: opacity 0.2s ease;
+        }
+
+        .mobile-nav-link:hover {
+            opacity: 0.8;
+        }
+
+        .mobile-nav-link.active {
+            font-weight: 700;
+            color: #ffdad9;
         }
 
         /* Hero Section */
@@ -313,8 +456,19 @@
             .header {
                 padding: 30px 20px 60px 20px;
                 gap: 10px;
-                flex-direction: column;
-                align-items: flex-start;
+                flex-direction: row;
+                align-items: center;
+                justify-content: space-between;
+            }
+
+            /* Hide desktop navigation on mobile */
+            .nav-items {
+                display: none;
+            }
+
+            /* Show mobile menu button */
+            .mobile-menu-button {
+                display: flex;
             }
             
             /* Hero - mobile font size and padding */
@@ -409,6 +563,38 @@
         <!-- Header -->
         <div class="header">
             <p class="site-title">Figma Experiments</p>
+            
+            <!-- Desktop Navigation -->
+            <div class="nav-items">
+                <a href="https://jonschafer.com" class="nav-link">Work</a>
+                <a href="#" class="nav-link active">Play</a>
+                <a href="https://jonschafer.com/wall-of-sound" class="nav-link">Jams</a>
+                <a href="mailto:hello@jonschafer.com?subject=Hello%20from%20Figma%20Experiments!" class="nav-link">👋</a>
+                <a href="https://www.are.na/jon-schafer/blocks" class="nav-link vibes">Vibes</a>
+            </div>
+
+            <!-- Mobile Menu Button -->
+            <button class="mobile-menu-button" onclick="toggleMobileMenu()">
+                <div class="mobile-menu-line"></div>
+                <div class="mobile-menu-line"></div>
+                <div class="mobile-menu-line"></div>
+            </button>
+        </div>
+
+        <!-- Mobile Menu Overlay -->
+        <div class="mobile-menu-overlay" id="mobileMenu">
+            <button class="mobile-menu-close" onclick="toggleMobileMenu()">
+                <div class="mobile-menu-close-line"></div>
+                <div class="mobile-menu-close-line"></div>
+            </button>
+            
+            <div class="mobile-nav-items">
+                <a href="https://jonschafer.com" class="mobile-nav-link" onclick="toggleMobileMenu()">Work</a>
+                <a href="#" class="mobile-nav-link active" onclick="toggleMobileMenu()">Play</a>
+                <a href="https://jonschafer.com/wall-of-sound" class="mobile-nav-link" onclick="toggleMobileMenu()">Jams</a>
+                <a href="mailto:hello@jonschafer.com?subject=Hello%20from%20Figma%20Experiments!" class="mobile-nav-link" onclick="toggleMobileMenu()">👋</a>
+                <a href="https://www.are.na/jon-schafer/blocks" class="mobile-nav-link" onclick="toggleMobileMenu()">Vibes</a>
+            </div>
         </div>
 
         <!-- Hero Section -->
@@ -478,6 +664,15 @@
                 top: 0,
                 behavior: 'smooth'
             });
+        }
+
+        // Mobile menu toggle function
+        function toggleMobileMenu() {
+            const mobileMenu = document.getElementById('mobileMenu');
+            const menuButton = document.querySelector('.mobile-menu-button');
+            
+            mobileMenu.classList.toggle('open');
+            menuButton.classList.toggle('open');
         }
 
         // Add smooth interactions

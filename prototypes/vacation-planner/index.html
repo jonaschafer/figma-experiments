@@ -432,6 +432,29 @@
             margin-top: 0.5rem;
         }
 
+        .cost-link {
+            color: var(--primary-orange);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            transition: all 0.2s ease;
+        }
+
+        .cost-link:hover {
+            color: var(--text-dark);
+            text-decoration: underline;
+        }
+
+        .cost-link-icon {
+            font-size: 0.8rem;
+            opacity: 0.7;
+        }
+
+        .cost-link:hover .cost-link-icon {
+            opacity: 1;
+        }
+
         .accommodation-card {
             background: var(--bg-light);
             border-radius: 15px;
@@ -1135,19 +1158,39 @@
                         <div class="cost-summary">
                             <div class="cost-item">
                                 <div class="cost-label">Flights</div>
-                                <div class="cost-value">${dest.costs.flights || '$0'}</div>
+                                <div class="cost-value">
+                                    <a href="${getFlightSearchUrl(dest)}" target="_blank" class="cost-link">
+                                        ${dest.costs.flights || '$0'}
+                                        <span class="cost-link-icon">🔗</span>
+                                    </a>
+                                </div>
                             </div>
                             <div class="cost-item">
                                 <div class="cost-label">Accommodation</div>
-                                <div class="cost-value">${dest.costs.accommodation || '$0'}</div>
+                                <div class="cost-value">
+                                    <a href="${getHotelSearchUrl(dest)}" target="_blank" class="cost-link">
+                                        ${dest.costs.accommodation || '$0'}
+                                        <span class="cost-link-icon">🔗</span>
+                                    </a>
+                                </div>
                             </div>
                             <div class="cost-item">
                                 <div class="cost-label">Food & Dining</div>
-                                <div class="cost-value">${dest.costs.food || '$0'}</div>
+                                <div class="cost-value">
+                                    <a href="${getFoodGuideUrl(dest)}" target="_blank" class="cost-link">
+                                        ${dest.costs.food || '$0'}
+                                        <span class="cost-link-icon">🔗</span>
+                                    </a>
+                                </div>
                             </div>
                             <div class="cost-item">
                                 <div class="cost-label">Activities</div>
-                                <div class="cost-value">${dest.costs.activities || '$0'}</div>
+                                <div class="cost-value">
+                                    <a href="${getActivitySearchUrl(dest)}" target="_blank" class="cost-link">
+                                        ${dest.costs.activities || '$0'}
+                                        <span class="cost-link-icon">🔗</span>
+                                    </a>
+                                </div>
                             </div>
                             <div class="cost-item total">
                                 <div class="cost-label">Total Estimated Cost</div>
@@ -1289,19 +1332,39 @@
                       <div class="comparison-costs">
                           <div class="cost-row">
                               <span>Flights:</span>
-                              <span class="cost-value">${dest.costs.flights || '$0'}</span>
+                              <span class="cost-value">
+                                  <a href="${getFlightSearchUrl(dest)}" target="_blank" class="cost-link">
+                                      ${dest.costs.flights || '$0'}
+                                      <span class="cost-link-icon">🔗</span>
+                                  </a>
+                              </span>
                           </div>
                           <div class="cost-row">
                               <span>Accommodation:</span>
-                              <span class="cost-value">${dest.costs.accommodation || '$0'}</span>
+                              <span class="cost-value">
+                                  <a href="${getHotelSearchUrl(dest)}" target="_blank" class="cost-link">
+                                      ${dest.costs.accommodation || '$0'}
+                                      <span class="cost-link-icon">🔗</span>
+                                  </a>
+                              </span>
                           </div>
                           <div class="cost-row">
                               <span>Daily Expenses:</span>
-                              <span class="cost-value">${dest.costs.food || '$0'}</span>
+                              <span class="cost-value">
+                                  <a href="${getFoodGuideUrl(dest)}" target="_blank" class="cost-link">
+                                      ${dest.costs.food || '$0'}
+                                      <span class="cost-link-icon">🔗</span>
+                                  </a>
+                              </span>
                           </div>
                           <div class="cost-row">
                               <span>Activities:</span>
-                              <span class="cost-value">${dest.costs.activities || '$0'}</span>
+                              <span class="cost-value">
+                                  <a href="${getActivitySearchUrl(dest)}" target="_blank" class="cost-link">
+                                      ${dest.costs.activities || '$0'}
+                                      <span class="cost-link-icon">🔗</span>
+                                  </a>
+                              </span>
                           </div>
                       </div>
                   </div>
@@ -1345,6 +1408,53 @@
             }
             
             return highlights.slice(0, 4); // Return top 4 highlights
+        }
+
+        // URL generation functions for cost links
+        function getFlightSearchUrl(dest) {
+            const destination = dest.name.includes(',') ? dest.name.split(',')[0] : dest.name;
+            const dates = getRecommendedDates(dest);
+            return `https://www.google.com/travel/flights/search?q=Flights+from+Portland+to+${encodeURIComponent(destination)}+${dates}`;
+        }
+
+        function getHotelSearchUrl(dest) {
+            const destination = dest.name.includes(',') ? dest.name.split(',')[0] : dest.name;
+            const dates = getRecommendedDates(dest);
+            return `https://www.booking.com/searchresults.html?ss=${encodeURIComponent(destination)}&checkin=${dates.split('+')[0]}&checkout=${dates.split('+')[1]}`;
+        }
+
+        function getFoodGuideUrl(dest) {
+            const destination = dest.name.includes(',') ? dest.name.split(',')[0] : dest.name;
+            return `https://www.tripadvisor.com/Restaurants-g${getTripAdvisorId(dest)}-${encodeURIComponent(destination)}.html`;
+        }
+
+        function getActivitySearchUrl(dest) {
+            const destination = dest.name.includes(',') ? dest.name.split(',')[0] : dest.name;
+            return `https://www.viator.com/searchResults/all?text=${encodeURIComponent(destination)}+activities`;
+        }
+
+        function getRecommendedDates(dest) {
+            // Generate dates for next month (7-day trip)
+            const today = new Date();
+            const nextMonth = new Date(today.getFullYear(), today.getMonth() + 1, 1);
+            const startDate = nextMonth.toISOString().split('T')[0];
+            const endDate = new Date(nextMonth.getTime() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+            return `${startDate}+${endDate}`;
+        }
+
+        function getTripAdvisorId(dest) {
+            // TripAdvisor location IDs for major destinations
+            const ids = {
+                'Maui': '60635', // Maui, Hawaii
+                'Big Island': '60633', // Hawaii Island
+                'Kauai': '60636', // Kauai
+                'Tulum': '150812', // Tulum, Mexico
+                'Cabo San Lucas': '150811', // Cabo San Lucas
+                'Costa Rica': '294266' // Costa Rica
+            };
+            
+            const key = Object.keys(ids).find(k => dest.name.includes(k));
+            return ids[key] || '60635'; // Default to Maui if not found
         }
 
         // Initialize the app

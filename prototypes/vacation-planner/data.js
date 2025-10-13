@@ -1037,6 +1037,9 @@ const destinations = [
   }
 ];
 
+// Make destinations available globally for HTML
+window.destinations = destinations;
+
 // Export for use in HTML
 if (typeof module !== 'undefined' && module.exports) {
   module.exports = destinations;

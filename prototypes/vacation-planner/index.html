@@ -1457,10 +1457,20 @@
             return ids[key] || '60635'; // Default to Maui if not found
         }
 
-        // Initialize the app
-        console.log('Destinations loaded:', destinations);
-        console.log('Number of destinations:', destinations.length);
-        init();
+        // Initialize the app when data is loaded
+        function initializeApp() {
+            if (typeof destinations !== 'undefined' && destinations.length > 0) {
+                console.log('Destinations loaded:', destinations);
+                console.log('Number of destinations:', destinations.length);
+                init();
+            } else {
+                console.log('Waiting for destinations to load...');
+                setTimeout(initializeApp, 100);
+            }
+        }
+
+        // Start initialization
+        initializeApp();
     </script>
 </body>
 </html>

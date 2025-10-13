@@ -359,6 +359,28 @@
             transform: translateY(-2px);
         }
 
+        /* Responsive Design - Large Desktop Layout (1440px and above) */
+        @media (min-width: 1440px) {
+            /* Carousel - horizontal layout for large desktop */
+            .carousel {
+                padding: 50px 60px;
+                overflow-x: visible;
+            }
+            
+            .projects-grid {
+                display: flex;
+                gap: 20px;
+                width: 100%;
+                min-width: auto;
+                justify-content: center;
+            }
+            
+            .project-card {
+                width: 424px;
+                flex-shrink: 0;
+            }
+        }
+
         /* Responsive Design - Medium Desktop Layout (1024px - 1439px) */
         @media (max-width: 1439px) and (min-width: 1024px) {
             /* Carousel - 2x2 grid layout for medium desktop */
@@ -608,6 +630,27 @@
         <div class="carousel">
             <div class="projects-grid">
                 
+                <!-- Vacation Planner Project -->
+                <a href="./prototypes/vacation-planner/" class="project-card">
+                    <div class="project-info">
+                        <div class="project-details">
+                            <p class="project-title">Vacation planner</p>
+                            <p class="project-description">Interactive travel planning tool with destination cards, cost breakdowns, detailed itineraries, and comparison mode. Features clickable cost links to booking sites and smart filtering by budget, season, and region.</p>
+                        </div>
+                        <div class="project-tags">
+                            <div class="tag">
+                                <p class="tag-text">HTML/CSS</p>
+                            </div>
+                            <div class="tag">
+                                <p class="tag-text">JavaScript</p>
+                            </div>
+                            <div class="tag">
+                                <p class="tag-text">Travel</p>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+
                 <!-- Mouse Repel Project -->
                 <a href="./prototypes/mouse-repel/" class="project-card">
                     <div class="project-info">

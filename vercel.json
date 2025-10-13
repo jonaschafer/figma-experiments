@@ -4,6 +4,17 @@
   "rewrites": [
     {
       "source": "/prototypes/:prototype",
+      "destination": "/prototypes/:prototype/index.html",
+      "has": [
+        {
+          "type": "header",
+          "key": "accept",
+          "value": "text/html"
+        }
+      ]
+    },
+    {
+      "source": "/prototypes/:prototype/",
       "destination": "/prototypes/:prototype/index.html"
     }
   ],

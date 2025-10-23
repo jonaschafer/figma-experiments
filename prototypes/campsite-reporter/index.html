@@ -375,8 +375,6 @@
             chatContainer.scrollTop = chatContainer.scrollHeight;
         }
 
-        let waitingForPhotos = false;
-
         function notePhotosNeeded(itemType) {
             conversationState.data.needsPhotos = true;
             setTimeout(() => {
@@ -420,16 +418,6 @@
                     addButtons(['Skip']);
                 }
             }, 800);
-        }
-
-        let waitingForPhotos = false;
-        let photoUploadType = '';
-
-        function continueAfterPhotos() {
-            waitingForPhotos = false;
-            conversationState.step++;
-            showTyping();
-            askQuestion();
         }
 
         function handleUserResponse(response) {

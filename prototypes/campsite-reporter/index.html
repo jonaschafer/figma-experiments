@@ -139,28 +139,6 @@
             cursor: not-allowed;
         }
 
-        .voice-button {
-            background: #f0f0f0;
-            border: none;
-            padding: 12px;
-            border-radius: 50%;
-            width: 48px;
-            height: 48px;
-            cursor: pointer;
-            font-size: 20px;
-        }
-
-        .voice-button.recording {
-            background: #ff4444;
-            color: white;
-            animation: pulse 1s infinite;
-        }
-
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
-        }
-
         .typing-indicator {
             display: none;
             padding: 12px 16px;
@@ -247,7 +225,6 @@
 
     <div class="input-area">
         <input type="text" id="userInput" placeholder="Type your answer..." />
-        <button class="voice-button" id="voiceButton" title="Voice input">🎤</button>
         <button class="send-button" id="sendButton">Send</button>
     </div>
 
@@ -255,7 +232,6 @@
         const chatContainer = document.getElementById('chatContainer');
         const userInput = document.getElementById('userInput');
         const sendButton = document.getElementById('sendButton');
-        const voiceButton = document.getElementById('voiceButton');
         const typingIndicator = document.getElementById('typingIndicator');
 
         let conversationState = {
@@ -266,9 +242,22 @@
                 vehicles: '',
                 description: '',
                 timeline: '',
-                contact: ''
+                contact: '',
+                blockingAccess: '',
+                siteItems: [],
+                vehicleDetails: {},
+                needsPhotos: false,
+                privateProperty: ''
             }
         };
+
+        const vehicleTypes = ['2 Door', '4 Door', '5th Wheel', 'Boat', 'Boat on Trailer', 'Boat Trailer', 'Box Truck', 'Bus', 'Camper', 'Canopy', 'Cargo Trailer', 'Dropbox', 'Dumpster', 'Flatbed Trailer', 'Golf Cart', 'Motorcycle', 'Motorhome', 'Pickup', 'Pickup Camper', 'Pickup with Trailer', 'Pod', 'Semi Cab', 'Semi Trailer', 'Station Wagon', 'Step Van', 'Storage Container', 'SUV', 'Tow Truck', 'Tractor Trailer', 'Trailer', 'Travel Trailer', 'Truck', 'Utility Trailer', 'Van'];
+        
+        const vehicleMakes = ['Acura', 'Alfa', 'American', 'Aprilia', 'Assembled', 'Astin Martin', 'Audi', 'Bajaj', 'Bentley', 'BMW', 'Buell', 'Buick', 'Cadillac', 'Chevrolet', 'Chrysler', 'Citroen', 'Daewoo', 'Daihatsu', 'Datsun', 'Desoto', 'Dodge', 'Ducati', 'Eagle', 'Ferrari', 'Fiat', 'Ford', 'Freightliner', 'Freuhaf', 'Genuine', 'Geo', 'GMC', 'Great Dane', 'Grumman', 'Harley Davidson', 'Hino', 'Honda', 'Hudson', 'Hummer', 'Hyundai', 'Indian', 'Infiniti', 'International', 'Isuzu', 'Italjet', 'Jaguar', 'Jeep', 'Jensen', 'Kawasaki', 'Kenworth', 'Kia', 'Kymco', 'Lamborghini', 'Lancia', 'Land Rover', 'Lexus', 'Lincoln', 'Lotus', 'Mack Truck', 'Maserati', 'Mazda', 'Mercedes Benz', 'Mercury', 'Merker', 'MG', 'Mini', 'Mitsubishi', 'Moto Guzzi', 'Nash', 'Nissan', 'Oldsmobile', 'Opel', 'Packard', 'Panoz', 'Peterbilt', 'Peugeot', 'Piaggio', 'Plymouth', 'Pontiac', 'Porsche', 'Prevost', 'Rambler', 'Renault', 'Rolls Royce', 'Saab', 'Saturn', 'Scion', 'Smartcar', 'Sterling', 'Studebaker', 'Subaru', 'Sunbeam', 'Suzuki', 'Symco', 'Tesla', 'Think', 'Toyota', 'Triumph', 'U-D', 'Utilimaster', 'Vespa', 'Victory', 'Volkswagen', 'Volvo', 'Wabash', 'White', 'Wiggins', 'Willys', 'Winnebago', 'Yamaha', 'Yugo', 'Unknown / Not sure'];
+        
+        const vehicleColors = ['Beige', 'Black', 'Blue', 'Brown', 'Dark Blue', 'Gold', 'Green', 'Gray', 'Maroon', 'Orange', 'Pink', 'Purple', 'Red', 'Silver', 'Silver Blue', 'Tan', 'Teal', 'White', 'Yellow', 'Unidentifiable'];
+        
+        const states = ['OR (Oregon)', 'WA (Washington)', 'AL (Alabama)', 'AK (Alaska)', 'AZ (Arizona)', 'AR (Arkansas)', 'CA (California)', 'CO (Colorado)', 'CT (Connecticut)', 'DE (Delaware)', 'DC (District of Columbia)', 'FL (Florida)', 'GA (Georgia)', 'GU (Guam)', 'HI (Hawaii)', 'ID (Idaho)', 'IL (Illinois)', 'IN (Indiana)', 'IA (Iowa)', 'KS (Kansas)', 'KY (Kentucky)', 'LA (Louisiana)', 'ME (Maine)', 'MD (Maryland)', 'MA (Massachusetts)', 'MI (Michigan)', 'MN (Minnesota)', 'MS (Mississippi)', 'MO (Missouri)', 'MT (Montana)', 'NE (Nebraska)', 'NV (Nevada)', 'NH (New Hampshire)', 'NJ (New Jersey)', 'NM (New Mexico)', 'NY (New York)', 'NC (North Carolina)', 'ND (North Dakota)', 'OH (Ohio)', 'OK (Oklahoma)', 'PA (Pennsylvania)', 'RI (Rhode Island)', 'SC (South Carolina)', 'SD (South Dakota)', 'TN (Tennessee)', 'TX (Texas)', 'UT (Utah)', 'VT (Vermont)', 'VA (Virginia)', 'WV (West Virginia)', 'WI (Wisconsin)', 'WY (Wyoming)', 'Not sure'];
 
         const questions = [
             {
@@ -277,14 +266,21 @@
                 help: "e.g., 'SE Hawthorne and 32nd' or '123 Main St'"
             },
             {
-                question: "How many tents or structures do you see?",
-                key: 'tentCount',
-                options: ['1-2', '3-5', '6-10', 'More than 10', 'Not sure']
+                question: "Is the campsite blocking pedestrian access, like a sidewalk, trail, or path?",
+                key: 'blockingAccess',
+                options: ['Yes', 'No']
             },
             {
-                question: "Are there any vehicles? (cars, RVs, trailers)",
-                key: 'vehicles',
-                options: ['No vehicles', '1-2 vehicles', '3+ vehicles']
+                question: "Which of the following items are visible at the site? (Select all that apply)",
+                key: 'siteItems',
+                options: ['Tent, tarp, or other shelter', 'Vehicle (car, truck, RV, trailer, etc.)', 'Trash or debris only'],
+                multiSelect: true
+            },
+            // Conditional questions will be inserted dynamically based on siteItems
+            {
+                question: "Is the location on private property?",
+                key: 'privateProperty',
+                options: ['Yes', 'No', 'Not sure']
             },
             {
                 question: "When did you first notice this campsite?",
@@ -320,20 +316,81 @@
             typingIndicator.classList.remove('active');
         }
 
-        function addButtons(options) {
+        function addButtons(options, multiSelect = false) {
             const buttonGroup = document.createElement('div');
             buttonGroup.className = 'button-group';
             
-            options.forEach(option => {
-                const button = document.createElement('button');
-                button.className = 'quick-button';
-                button.textContent = option;
-                button.onclick = () => handleUserResponse(option);
-                buttonGroup.appendChild(button);
-            });
+            if (multiSelect) {
+                // Multi-select mode with checkboxes
+                const selectedItems = [];
+                
+                options.forEach(option => {
+                    const button = document.createElement('button');
+                    button.className = 'quick-button';
+                    button.textContent = `☐ ${option}`;
+                    button.dataset.selected = 'false';
+                    button.onclick = () => {
+                        if (button.dataset.selected === 'false') {
+                            button.dataset.selected = 'true';
+                            button.textContent = `☑ ${option}`;
+                            button.style.background = '#0f3317';
+                            selectedItems.push(option);
+                        } else {
+                            button.dataset.selected = 'false';
+                            button.textContent = `☐ ${option}`;
+                            button.style.background = '#1a472a';
+                            const index = selectedItems.indexOf(option);
+                            if (index > -1) selectedItems.splice(index, 1);
+                        }
+                    };
+                    buttonGroup.appendChild(button);
+                });
+                
+                // Add Continue button for multi-select
+                const continueButton = document.createElement('button');
+                continueButton.className = 'quick-button';
+                continueButton.textContent = 'Continue';
+                continueButton.style.background = '#ff6b35';
+                continueButton.style.marginTop = '8px';
+                continueButton.onclick = () => {
+                    if (selectedItems.length > 0) {
+                        handleUserResponse(selectedItems.join(', '));
+                    } else {
+                        alert('Please select at least one option');
+                    }
+                };
+                buttonGroup.appendChild(continueButton);
+            } else {
+                // Single select mode
+                options.forEach(option => {
+                    const button = document.createElement('button');
+                    button.className = 'quick-button';
+                    button.textContent = option;
+                    button.onclick = () => handleUserResponse(option);
+                    buttonGroup.appendChild(button);
+                });
+            }
             
             chatContainer.appendChild(buttonGroup);
             chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+
+        let waitingForPhotos = false;
+
+        function notePhotosNeeded(itemType) {
+            conversationState.data.needsPhotos = true;
+            setTimeout(() => {
+                addMessage(`Great! Please take photos of the ${itemType} and have them ready to attach to the email.`);
+                setTimeout(() => {
+                    continueAfterPhotoNote();
+                }, 1500);
+            }, 800);
+        }
+
+        function continueAfterPhotoNote() {
+            conversationState.step++;
+            showTyping();
+            askQuestion();
         }
 
         function askQuestion() {
@@ -356,7 +413,7 @@
                 }
                 
                 if (currentQuestion.options) {
-                    addButtons(currentQuestion.options);
+                    addButtons(currentQuestion.options, currentQuestion.multiSelect);
                 }
                 
                 if (currentQuestion.optional) {
@@ -365,21 +422,156 @@
             }, 800);
         }
 
+        let waitingForPhotos = false;
+        let photoUploadType = '';
+
+        function continueAfterPhotos() {
+            waitingForPhotos = false;
+            conversationState.step++;
+            showTyping();
+            askQuestion();
+        }
+
         function handleUserResponse(response) {
+            // Remove any existing button groups and upload containers
             const buttonGroups = chatContainer.querySelectorAll('.button-group');
             buttonGroups.forEach(bg => bg.remove());
+            
+            const uploadContainers = chatContainer.querySelectorAll('[style*="marginTop"]');
+            uploadContainers.forEach(uc => {
+                if (uc.querySelector('input[type="file"]')) uc.remove();
+            });
 
             addMessage(response, true);
             
             const currentQuestion = questions[conversationState.step];
             
             if (response !== 'Skip') {
-                conversationState.data[currentQuestion.key] = response;
+                if (currentQuestion.multiSelect) {
+                    conversationState.data[currentQuestion.key] = response.split(', ');
+                } else {
+                    conversationState.data[currentQuestion.key] = response;
+                }
+            }
+            
+            // Handle conditional photo uploads based on siteItems
+            if (currentQuestion.key === 'siteItems') {
+                const items = response.split(', ');
+                
+                if (items.includes('Tent, tarp, or other shelter')) {
+                    conversationState.step++;
+                    showTyping();
+                    notePhotosNeeded('tent/shelter');
+                    return;
+                } else if (items.includes('Vehicle (car, truck, RV, trailer, etc.)')) {
+                    conversationState.step++;
+                    askVehicleQuestions();
+                    return;
+                } else if (items.includes('Trash or debris only')) {
+                    conversationState.step++;
+                    showTyping();
+                    notePhotosNeeded('trash/debris');
+                    return;
+                }
             }
             
             conversationState.step++;
             showTyping();
             askQuestion();
+        }
+
+        let vehicleQuestionStep = 0;
+
+        function askVehicleQuestions() {
+            const vehicleQuestions = [
+                {
+                    question: "What type of vehicle?",
+                    key: 'vehicleType',
+                    options: vehicleTypes.slice(0, 10), // Show first 10, can type for others
+                    allowText: true
+                },
+                {
+                    question: "Vehicle make/brand? (Type or select)",
+                    key: 'vehicleMake',
+                    options: ['Ford', 'Chevrolet', 'Toyota', 'Honda', 'Nissan', 'Unknown / Not sure'],
+                    allowText: true
+                },
+                {
+                    question: "Vehicle color?",
+                    key: 'vehicleColor',
+                    options: vehicleColors.slice(0, 10)
+                },
+                {
+                    question: "License plate state? (Type or select)",
+                    key: 'plateState',
+                    options: ['OR (Oregon)', 'WA (Washington)', 'CA (California)', 'Not sure'],
+                    allowText: true
+                },
+                {
+                    question: "License plate number? (Type it, or say 'Skip' if unknown)",
+                    key: 'plateNumber',
+                    optional: true
+                }
+            ];
+
+            if (vehicleQuestionStep >= vehicleQuestions.length) {
+                // Note that vehicle photos are needed
+                showTyping();
+                setTimeout(() => {
+                    hideTyping();
+                    addMessage("Great! Please take photos of the vehicle and have them ready to attach to the email.");
+                    conversationState.data.needsPhotos = true;
+                    setTimeout(() => {
+                        vehicleQuestionStep = 0;
+                        conversationState.step++;
+                        showTyping();
+                        askQuestion();
+                    }, 1500);
+                }, 800);
+                return;
+            }
+
+            const vq = vehicleQuestions[vehicleQuestionStep];
+            
+            showTyping();
+            setTimeout(() => {
+                hideTyping();
+                addMessage(vq.question);
+                
+                if (vq.options) {
+                    addButtons(vq.options);
+                }
+                
+                if (vq.optional) {
+                    addButtons(['Skip']);
+                }
+            }, 800);
+
+            // Listen for vehicle response
+            const originalHandler = handleUserResponse;
+            window.handleVehicleResponse = (resp) => {
+                buttonGroups = chatContainer.querySelectorAll('.button-group');
+                buttonGroups.forEach(bg => bg.remove());
+                
+                addMessage(resp, true);
+                
+                if (resp !== 'Skip') {
+                    if (!conversationState.data.vehicleDetails) {
+                        conversationState.data.vehicleDetails = {};
+                    }
+                    conversationState.data.vehicleDetails[vq.key] = resp;
+                }
+                
+                vehicleQuestionStep++;
+                askVehicleQuestions();
+            };
+            
+            // Temporarily replace handler
+            const buttons = chatContainer.querySelectorAll('.quick-button');
+            buttons.forEach(btn => {
+                const oldOnclick = btn.onclick;
+                btn.onclick = () => window.handleVehicleResponse(btn.textContent);
+            });
         }
 
         function showSummary() {
@@ -390,9 +582,21 @@
                 
                 setTimeout(() => {
                     let summary = `📍 Location: ${conversationState.data.location}\n`;
-                    summary += `⛺ Tents: ${conversationState.data.tentCount || 'Not specified'}\n`;
-                    summary += `🚗 Vehicles: ${conversationState.data.vehicles || 'Not specified'}\n`;
-                    summary += `📅 Timeline: ${conversationState.data.timeline || 'Not specified'}`;
+                    summary += `🚶 Blocking access: ${conversationState.data.blockingAccess || 'Not specified'}\n`;
+                    
+                    if (conversationState.data.siteItems && conversationState.data.siteItems.length > 0) {
+                        summary += `📋 Items at site: ${conversationState.data.siteItems.join(', ')}\n`;
+                    }
+                    
+                    if (conversationState.data.vehicleDetails && Object.keys(conversationState.data.vehicleDetails).length > 0) {
+                        summary += `🚗 Vehicle: ${conversationState.data.vehicleDetails.vehicleType || ''} ${conversationState.data.vehicleDetails.vehicleMake || ''} (${conversationState.data.vehicleDetails.vehicleColor || ''})\n`;
+                        if (conversationState.data.vehicleDetails.plateState) {
+                            summary += `   Plate: ${conversationState.data.vehicleDetails.plateState} ${conversationState.data.vehicleDetails.plateNumber || ''}\n`;
+                        }
+                    }
+                    
+                    summary += `🏠 Private property: ${conversationState.data.privateProperty || 'Not specified'}\n`;
+                    summary += `📅 First noticed: ${conversationState.data.timeline || 'Not specified'}`;
                     
                     if (conversationState.data.description) {
                         summary += `\n💬 Notes: ${conversationState.data.description}`;
@@ -401,21 +605,27 @@
                     addMessage(summary);
                     
                     setTimeout(() => {
-                        addMessage("I'll now open your email app with everything pre-filled. Just review and hit send!");
+                        if (conversationState.data.needsPhotos) {
+                            addMessage("📸 IMPORTANT: Don't forget to attach your photos to the email before sending!");
+                        }
                         
-                        const submitButton = document.createElement('button');
-                        submitButton.className = 'submit-form-button';
-                        submitButton.textContent = '📧 Open Email to Submit';
-                        submitButton.onclick = submitToPortland;
-                        chatContainer.appendChild(submitButton);
-                        
-                        const restartButton = document.createElement('button');
-                        restartButton.className = 'restart-button';
-                        restartButton.textContent = '↻ Report Another Campsite';
-                        restartButton.onclick = restartConversation;
-                        chatContainer.appendChild(restartButton);
-                        
-                        chatContainer.scrollTop = chatContainer.scrollHeight;
+                        setTimeout(() => {
+                            addMessage("I'll now open your email app with everything pre-filled. Review the details and send!");
+                            
+                            const submitButton = document.createElement('button');
+                            submitButton.className = 'submit-form-button';
+                            submitButton.textContent = '📧 Open Email to Submit';
+                            submitButton.onclick = submitToPortland;
+                            chatContainer.appendChild(submitButton);
+                            
+                            const restartButton = document.createElement('button');
+                            restartButton.className = 'restart-button';
+                            restartButton.textContent = '↻ Report Another Campsite';
+                            restartButton.onclick = restartConversation;
+                            chatContainer.appendChild(restartButton);
+                            
+                            chatContainer.scrollTop = chatContainer.scrollHeight;
+                        }, 1000);
                     }, 1000);
                 }, 1000);
             }, 500);
@@ -431,20 +641,42 @@
             let body = 'I would like to report a campsite at the following location:\n\n';
             body += `Location: ${data.location}\n\n`;
             
-            if (data.tentCount) {
-                body += `Number of tents/structures: ${data.tentCount}\n`;
-            }
-            if (data.vehicles) {
-                body += `Vehicles present: ${data.vehicles}\n`;
-            }
-            if (data.timeline) {
-                body += `First noticed: ${data.timeline}\n`;
-            }
-            if (data.description) {
-                body += `\nAdditional details:\n${data.description}\n`;
+            body += `Blocking Pedestrian Access: ${data.blockingAccess || 'Not specified'}\n\n`;
+            
+            if (data.siteItems && data.siteItems.length > 0) {
+                body += `Items visible at site:\n`;
+                data.siteItems.forEach(item => {
+                    body += `- ${item}\n`;
+                });
+                body += '\n';
             }
             
-            body += '\n---\nSubmitted via PDX Campsite Reporter';
+            if (data.vehicleDetails && Object.keys(data.vehicleDetails).length > 0) {
+                body += `Vehicle Details:\n`;
+                if (data.vehicleDetails.vehicleType) body += `- Type: ${data.vehicleDetails.vehicleType}\n`;
+                if (data.vehicleDetails.vehicleMake) body += `- Make: ${data.vehicleDetails.vehicleMake}\n`;
+                if (data.vehicleDetails.vehicleColor) body += `- Color: ${data.vehicleDetails.vehicleColor}\n`;
+                if (data.vehicleDetails.plateState) body += `- License Plate State: ${data.vehicleDetails.plateState}\n`;
+                if (data.vehicleDetails.plateNumber) body += `- License Plate Number: ${data.vehicleDetails.plateNumber}\n`;
+                body += '\n';
+            }
+            
+            body += `Private Property: ${data.privateProperty || 'Not specified'}\n`;
+            body += `First Noticed: ${data.timeline || 'Not specified'}\n\n`;
+            
+            if (data.description) {
+                body += `Additional Details:\n${data.description}\n\n`;
+            }
+            
+            if (data.needsPhotos) {
+                body += `NOTE: Photos will be attached to this email.\n\n`;
+            }
+            
+            if (data.contact && data.contact !== 'Skip') {
+                body += `Contact Email: ${data.contact}\n\n`;
+            }
+            
+            body += '---\nSubmitted via PDX Campsite Reporter';
             
             // Encode the body for mailto link
             const encodedBody = encodeURIComponent(body);
@@ -466,9 +698,15 @@
                     vehicles: '',
                     description: '',
                     timeline: '',
-                    contact: ''
+                    contact: '',
+                    blockingAccess: '',
+                    siteItems: [],
+                    vehicleDetails: {},
+                    needsPhotos: false,
+                    privateProperty: ''
                 }
             };
+            vehicleQuestionStep = 0;
             userInput.value = '';
             setTimeout(() => {
                 showTyping();
@@ -489,58 +727,6 @@
                 sendButton.click();
             }
         });
-
-        let recognition = null;
-        if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
-            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-            recognition = new SpeechRecognition();
-            recognition.continuous = false;
-            recognition.interimResults = false;
-            recognition.lang = 'en-US';
-
-            recognition.onstart = () => {
-                voiceButton.classList.add('recording');
-                console.log('Voice recognition started');
-            };
-
-            recognition.onresult = (event) => {
-                const transcript = event.results[0][0].transcript;
-                userInput.value = transcript;
-                voiceButton.classList.remove('recording');
-                console.log('Transcript:', transcript);
-            };
-
-            recognition.onerror = (event) => {
-                voiceButton.classList.remove('recording');
-                console.error('Speech recognition error:', event.error);
-                if (event.error === 'not-allowed') {
-                    alert('Microphone access denied. Please enable microphone permissions in your browser settings.');
-                } else if (event.error === 'no-speech') {
-                    alert('No speech detected. Please try again.');
-                }
-            };
-
-            recognition.onend = () => {
-                voiceButton.classList.remove('recording');
-                console.log('Voice recognition ended');
-            };
-
-            voiceButton.addEventListener('click', () => {
-                if (voiceButton.classList.contains('recording')) {
-                    recognition.stop();
-                } else {
-                    try {
-                        recognition.start();
-                    } catch (error) {
-                        console.error('Error starting recognition:', error);
-                        alert('Unable to start voice input. Make sure you\'re using HTTPS and have granted microphone permissions.');
-                    }
-                }
-            });
-        } else {
-            voiceButton.style.display = 'none';
-            console.log('Speech recognition not supported in this browser');
-        }
 
         setTimeout(() => {
             showTyping();

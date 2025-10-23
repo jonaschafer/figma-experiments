@@ -446,11 +446,7 @@
             const currentQuestion = questions[conversationState.step];
             
             if (response !== 'Skip') {
-                if (currentQuestion.multiSelect) {
-                    conversationState.data[currentQuestion.key] = response.split(', ');
-                } else {
-                    conversationState.data[currentQuestion.key] = response;
-                }
+                conversationState.data[currentQuestion.key] = response;
             }
             
             // Handle conditional photo uploads based on individual responses
@@ -519,6 +515,15 @@
                     hideTyping();
                     addMessage("Great! Please take photos of the vehicle and have them ready to attach to the email.");
                     conversationState.data.needsPhotos = true;
+                    
+                    // Restore original event handlers
+                    if (window.originalSendHandler) {
+                        sendButton.onclick = window.originalSendHandler;
+                    }
+                    if (window.originalKeyHandler) {
+                        userInput.onkeypress = window.originalKeyHandler;
+                    }
+                    
                     setTimeout(() => {
                         vehicleQuestionStep = 0;
                         conversationState.step++;
@@ -549,9 +554,8 @@
             }, 800);
 
             // Listen for vehicle response via text input
-            const originalHandler = handleUserResponse;
             window.handleVehicleResponse = (resp) => {
-                buttonGroups = chatContainer.querySelectorAll('.button-group');
+                const buttonGroups = chatContainer.querySelectorAll('.button-group');
                 buttonGroups.forEach(bg => bg.remove());
                 
                 addMessage(resp, true);
@@ -584,6 +588,10 @@
                     sendButton.click();
                 }
             };
+            
+            // Store references for cleanup
+            window.originalSendHandler = originalSendHandler;
+            window.originalKeyHandler = originalKeyHandler;
         }
 
         function showSummary() {

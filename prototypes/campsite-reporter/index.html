@@ -474,33 +474,34 @@
         let vehicleQuestionStep = 0;
 
         function askVehicleQuestions() {
+            console.log('askVehicleQuestions called, step:', vehicleQuestionStep);
             const vehicleQuestions = [
                 {
-                    question: "What type of vehicle? (e.g. SUV, RV)",
+                    question: "What kind of vehicle? (e.g. SUV, RV)",
                     key: 'vehicleType',
                     allowText: true,
                     placeholder: "Type vehicle type..."
                 },
                 {
-                    question: "What is the make/brand? (e.g. Dodge, Caravan)",
+                    question: "What's the make/brand? (e.g. Dodge, Caravan)",
                     key: 'vehicleMake',
                     allowText: true,
                     placeholder: "Type make/brand..."
                 },
                 {
-                    question: "What color is the vehicle? (e.g. beige)",
+                    question: "What's the color? (e.g. beige)",
                     key: 'vehicleColor',
                     allowText: true,
                     placeholder: "Type color..."
                 },
                 {
-                    question: "What state is the license plate from? (e.g. Washington)",
+                    question: "What's the license plate state?",
                     key: 'plateState',
                     allowText: true,
                     placeholder: "Type state..."
                 },
                 {
-                    question: "What is the license plate number? (optional)",
+                    question: "What's the license plate number?",
                     key: 'plateNumber',
                     allowText: true,
                     placeholder: "Type license plate number or say 'Skip'",
@@ -525,7 +526,6 @@
                     }
                     
                     setTimeout(() => {
-                        vehicleQuestionStep = 0;
                         conversationState.step++;
                         showTyping();
                         askQuestion();
@@ -555,6 +555,7 @@
 
             // Listen for vehicle response via text input
             window.handleVehicleResponse = (resp) => {
+                console.log('handleVehicleResponse called with:', resp, 'step:', vehicleQuestionStep);
                 const buttonGroups = chatContainer.querySelectorAll('.button-group');
                 buttonGroups.forEach(bg => bg.remove());
                 
@@ -568,6 +569,7 @@
                 }
                 
                 vehicleQuestionStep++;
+                console.log('vehicleQuestionStep incremented to:', vehicleQuestionStep);
                 askVehicleQuestions();
             };
             

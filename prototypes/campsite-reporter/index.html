@@ -244,9 +244,7 @@
                 timeline: '',
                 contact: '',
                 blockingAccess: '',
-                hasShelter: '',
-                hasVehicle: '',
-                hasTrash: '',
+                siteItems: [],
                 vehicleDetails: {},
                 needsPhotos: false,
                 privateProperty: ''
@@ -273,19 +271,10 @@
                 options: ['Yes', 'No']
             },
             {
-                question: "Is there a tent, tarp, or other shelter?",
-                key: 'hasShelter',
-                options: ['Yes', 'No']
-            },
-            {
-                question: "Is there a vehicle (car, truck, RV, trailer, etc.)?",
-                key: 'hasVehicle',
-                options: ['Yes', 'No']
-            },
-            {
-                question: "Is there trash or debris?",
-                key: 'hasTrash',
-                options: ['Yes', 'No']
+                question: "Which of the following items are visible at the site? (Select all that apply)",
+                key: 'siteItems',
+                options: ['Tent, tarp, or other shelter', 'Vehicle (car, truck, RV, trailer, etc.)', 'Trash or debris only'],
+                multiSelect: true
             },
             // Conditional questions will be inserted dynamically based on siteItems
             {
@@ -402,6 +391,9 @@
             askQuestion();
         }
 
+        let vehicleQuestionStep = 0;
+        let isAskingVehicleQuestions = false;
+
         function askQuestion() {
             if (conversationState.step >= questions.length) {
                 showSummary();
@@ -432,6 +424,15 @@
         }
 
         function handleUserResponse(response) {
+            // If we're asking vehicle questions, use the vehicle handler
+            if (isAskingVehicleQuestions) {
+                const buttonGroups = chatContainer.querySelectorAll('.button-group');
+                buttonGroups.forEach(bg => bg.remove());
+                addMessage(response, true);
+                handleVehicleResponse(response);
+                return;
+            }
+            
             // Remove any existing button groups and upload containers
             const buttonGroups = chatContainer.querySelectorAll('.button-group');
             buttonGroups.forEach(bg => bg.remove());
@@ -446,24 +447,32 @@
             const currentQuestion = questions[conversationState.step];
             
             if (response !== 'Skip') {
-                conversationState.data[currentQuestion.key] = response;
+                if (currentQuestion.multiSelect) {
+                    conversationState.data[currentQuestion.key] = response.split(', ');
+                } else {
+                    conversationState.data[currentQuestion.key] = response;
+                }
             }
             
-            // Handle conditional photo uploads based on individual responses
-            if (currentQuestion.key === 'hasShelter' && response === 'Yes') {
-                conversationState.step++;
-                showTyping();
-                notePhotosNeeded('tent/shelter');
-                return;
-            } else if (currentQuestion.key === 'hasVehicle' && response === 'Yes') {
-                conversationState.step++;
-                askVehicleQuestions();
-                return;
-            } else if (currentQuestion.key === 'hasTrash' && response === 'Yes') {
-                conversationState.step++;
-                showTyping();
-                notePhotosNeeded('trash/debris');
-                return;
+            // Handle conditional photo uploads based on siteItems
+            if (currentQuestion.key === 'siteItems') {
+                const items = response.split(', ');
+                
+                if (items.includes('Tent, tarp, or other shelter')) {
+                    conversationState.step++;
+                    showTyping();
+                    notePhotosNeeded('tent/shelter');
+                    return;
+                } else if (items.includes('Vehicle (car, truck, RV, trailer, etc.)')) {
+                    conversationState.step++;
+                    askVehicleQuestions();
+                    return;
+                } else if (items.includes('Trash or debris only')) {
+                    conversationState.step++;
+                    showTyping();
+                    notePhotosNeeded('trash/debris');
+                    return;
+                }
             }
             
             conversationState.step++;
@@ -471,60 +480,48 @@
             askQuestion();
         }
 
-        let vehicleQuestionStep = 0;
-
         function askVehicleQuestions() {
-            console.log('askVehicleQuestions called, step:', vehicleQuestionStep);
+            isAskingVehicleQuestions = true;
+            
             const vehicleQuestions = [
                 {
                     question: "What kind of vehicle? (e.g. SUV, RV)",
                     key: 'vehicleType',
-                    allowText: true,
-                    placeholder: "Type vehicle type..."
+                    options: ['SUV', 'RV', 'Motorhome', 'Pickup', 'Van', 'Sedan', 'Truck', 'Trailer', 'Other']
                 },
                 {
                     question: "What's the make/brand? (e.g. Dodge, Caravan)",
                     key: 'vehicleMake',
-                    allowText: true,
-                    placeholder: "Type make/brand..."
+                    options: ['Ford', 'Chevrolet', 'Toyota', 'Honda', 'Dodge', 'Nissan', 'Unknown']
                 },
                 {
                     question: "What's the color? (e.g. beige)",
                     key: 'vehicleColor',
-                    allowText: true,
-                    placeholder: "Type color..."
+                    options: ['White', 'Black', 'Silver', 'Blue', 'Red', 'Gray', 'Beige', 'Brown', 'Other']
                 },
                 {
                     question: "What's the license plate state?",
                     key: 'plateState',
-                    allowText: true,
-                    placeholder: "Type state..."
+                    options: ['OR (Oregon)', 'WA (Washington)', 'CA (California)', 'ID (Idaho)', 'Not sure']
                 },
                 {
-                    question: "What's the license plate number?",
+                    question: "What's the license plate number? (or type 'Skip' if unknown)",
                     key: 'plateNumber',
-                    allowText: true,
-                    placeholder: "Type license plate number or say 'Skip'",
                     optional: true
                 }
             ];
 
             if (vehicleQuestionStep >= vehicleQuestions.length) {
+                // Done with vehicle questions
+                isAskingVehicleQuestions = false;
+                vehicleQuestionStep = 0;
+                
                 // Note that vehicle photos are needed
                 showTyping();
                 setTimeout(() => {
                     hideTyping();
                     addMessage("Great! Please take photos of the vehicle and have them ready to attach to the email.");
                     conversationState.data.needsPhotos = true;
-                    
-                    // Restore original event handlers
-                    if (window.originalSendHandler) {
-                        sendButton.onclick = window.originalSendHandler;
-                    }
-                    if (window.originalKeyHandler) {
-                        userInput.onkeypress = window.originalKeyHandler;
-                    }
-                    
                     setTimeout(() => {
                         conversationState.step++;
                         showTyping();
@@ -541,59 +538,34 @@
                 hideTyping();
                 addMessage(vq.question);
                 
-                if (vq.placeholder) {
-                    const help = document.createElement('div');
-                    help.className = 'message bot-message location-help';
-                    help.textContent = vq.placeholder;
-                    chatContainer.appendChild(help);
+                if (vq.options) {
+                    addButtons(vq.options);
                 }
                 
                 if (vq.optional) {
                     addButtons(['Skip']);
                 }
             }, 800);
+        }
 
-            // Listen for vehicle response via text input
-            window.handleVehicleResponse = (resp) => {
-                console.log('handleVehicleResponse called with:', resp, 'step:', vehicleQuestionStep);
-                const buttonGroups = chatContainer.querySelectorAll('.button-group');
-                buttonGroups.forEach(bg => bg.remove());
-                
-                addMessage(resp, true);
-                
-                if (resp !== 'Skip') {
-                    if (!conversationState.data.vehicleDetails) {
-                        conversationState.data.vehicleDetails = {};
-                    }
-                    conversationState.data.vehicleDetails[vq.key] = resp;
+        function handleVehicleResponse(response) {
+            const vq = [
+                { key: 'vehicleType' },
+                { key: 'vehicleMake' },
+                { key: 'vehicleColor' },
+                { key: 'plateState' },
+                { key: 'plateNumber' }
+            ][vehicleQuestionStep];
+            
+            if (response !== 'Skip') {
+                if (!conversationState.data.vehicleDetails) {
+                    conversationState.data.vehicleDetails = {};
                 }
-                
-                vehicleQuestionStep++;
-                console.log('vehicleQuestionStep incremented to:', vehicleQuestionStep);
-                askVehicleQuestions();
-            };
+                conversationState.data.vehicleDetails[vq.key] = response;
+            }
             
-            // Temporarily replace the main handler for vehicle questions
-            const originalSendHandler = sendButton.onclick;
-            const originalKeyHandler = userInput.onkeypress;
-            
-            sendButton.onclick = () => {
-                const response = userInput.value.trim();
-                if (response) {
-                    window.handleVehicleResponse(response);
-                    userInput.value = '';
-                }
-            };
-            
-            userInput.onkeypress = (e) => {
-                if (e.key === 'Enter') {
-                    sendButton.click();
-                }
-            };
-            
-            // Store references for cleanup
-            window.originalSendHandler = originalSendHandler;
-            window.originalKeyHandler = originalKeyHandler;
+            vehicleQuestionStep++;
+            askVehicleQuestions();
         }
 
         function showSummary() {
@@ -606,14 +578,8 @@
                     let summary = `📍 Location: ${conversationState.data.location}\n`;
                     summary += `🚶 Blocking access: ${conversationState.data.blockingAccess || 'Not specified'}\n`;
                     
-                    if (conversationState.data.hasShelter === 'Yes') {
-                        summary += `🏕️ Tent/shelter: Yes\n`;
-                    }
-                    if (conversationState.data.hasVehicle === 'Yes') {
-                        summary += `🚗 Vehicle: Yes\n`;
-                    }
-                    if (conversationState.data.hasTrash === 'Yes') {
-                        summary += `🗑️ Trash/debris: Yes\n`;
+                    if (conversationState.data.siteItems && conversationState.data.siteItems.length > 0) {
+                        summary += `📋 Items at site: ${conversationState.data.siteItems.join(', ')}\n`;
                     }
                     
                     if (conversationState.data.vehicleDetails && Object.keys(conversationState.data.vehicleDetails).length > 0) {
@@ -671,17 +637,13 @@
             
             body += `Blocking Pedestrian Access: ${data.blockingAccess || 'Not specified'}\n\n`;
             
-            body += `Items visible at site:\n`;
-            if (data.hasShelter === 'Yes') {
-                body += `- Tent, tarp, or other shelter\n`;
+            if (data.siteItems && data.siteItems.length > 0) {
+                body += `Items visible at site:\n`;
+                data.siteItems.forEach(item => {
+                    body += `- ${item}\n`;
+                });
+                body += '\n';
             }
-            if (data.hasVehicle === 'Yes') {
-                body += `- Vehicle (car, truck, RV, trailer, etc.)\n`;
-            }
-            if (data.hasTrash === 'Yes') {
-                body += `- Trash or debris\n`;
-            }
-            body += '\n';
             
             if (data.vehicleDetails && Object.keys(data.vehicleDetails).length > 0) {
                 body += `Vehicle Details:\n`;
@@ -732,9 +694,7 @@
                     timeline: '',
                     contact: '',
                     blockingAccess: '',
-                    hasShelter: '',
-                    hasVehicle: '',
-                    hasTrash: '',
+                    siteItems: [],
                     vehicleDetails: {},
                     needsPhotos: false,
                     privateProperty: ''

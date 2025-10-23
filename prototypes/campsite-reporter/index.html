@@ -401,11 +401,11 @@
                     addMessage(summary);
                     
                     setTimeout(() => {
-                        addMessage("I'll now open Portland's form with this information pre-filled. You just need to tap Submit!");
+                        addMessage("I'll now open your email app with everything pre-filled. Just review and hit send!");
                         
                         const submitButton = document.createElement('button');
                         submitButton.className = 'submit-form-button';
-                        submitButton.textContent = '🚀 Open Pre-filled Form';
+                        submitButton.textContent = '📧 Open Email to Submit';
                         submitButton.onclick = submitToPortland;
                         chatContainer.appendChild(submitButton);
                         
@@ -424,43 +424,36 @@
         function submitToPortland() {
             const data = conversationState.data;
             
-            // Build description with all details
-            let description = '';
-            if (data.location) description += `Location: ${data.location}\n`;
-            if (data.tentCount) description += `Number of tents/structures: ${data.tentCount}\n`;
-            if (data.vehicles) description += `Vehicles: ${data.vehicles}\n`;
-            if (data.timeline) description += `First noticed: ${data.timeline}\n`;
-            if (data.description) description += `Additional notes: ${data.description}\n`;
+            // Build email subject
+            const subject = encodeURIComponent('Campsite Report - ' + data.location);
             
-            // Create URL with pre-filled parameters
-            const baseUrl = 'https://www.portland.gov/homelessness-impact-reduction/report-campsite';
-            const params = new URLSearchParams();
+            // Build email body with all details
+            let body = 'I would like to report a campsite at the following location:\n\n';
+            body += `Location: ${data.location}\n\n`;
             
-            // Add contact email if provided
-            if (data.contact && data.contact !== 'Skip') {
-                params.append('contact_email', data.contact);
+            if (data.tentCount) {
+                body += `Number of tents/structures: ${data.tentCount}\n`;
+            }
+            if (data.vehicles) {
+                body += `Vehicles present: ${data.vehicles}\n`;
+            }
+            if (data.timeline) {
+                body += `First noticed: ${data.timeline}\n`;
+            }
+            if (data.description) {
+                body += `\nAdditional details:\n${data.description}\n`;
             }
             
-            // Note: Portland's form may not support all URL parameters
-            // This will at least open the form - users may need to copy/paste details
-            const url = params.toString() ? `${baseUrl}?${params.toString()}` : baseUrl;
+            body += '\n---\nSubmitted via PDX Campsite Reporter';
             
-            // Copy full details to clipboard as backup
-            const clipboardText = `PDX Campsite Report:\n\n${description}`;
+            // Encode the body for mailto link
+            const encodedBody = encodeURIComponent(body);
             
-            // Try to copy to clipboard
-            if (navigator.clipboard && navigator.clipboard.writeText) {
-                navigator.clipboard.writeText(clipboardText).then(() => {
-                    alert('Report details copied to clipboard! The Portland form will open - paste these details if needed.');
-                }).catch(() => {
-                    alert('Opening Portland\'s form. Please refer to the summary above to fill in the details.');
-                });
-            } else {
-                alert('Opening Portland\'s form. Please refer to the summary above to fill in the details.');
-            }
+            // Create mailto link to Portland's reporting email
+            const mailtoLink = `mailto:reportpdx@portlandoregon.gov?subject=${subject}&body=${encodedBody}`;
             
-            // Open Portland's form
-            window.open(url, '_blank');
+            // Open email client
+            window.location.href = mailtoLink;
         }
 
         function restartConversation() {

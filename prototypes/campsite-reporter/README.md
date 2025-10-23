@@ -55,7 +55,18 @@ A chat-based interface that:
    - Email for follow-up? (optional)
 3. User answers via text, voice, or quick buttons
 4. App shows summary
-5. Opens Portland's form (pre-filled in future version)
+5. **Opens user's email app with pre-filled email to reportpdx@portlandoregon.gov**
+6. User reviews and hits send - done in 10 seconds!
+
+## 🎯 Why Email Instead of Web Form?
+
+Portland accepts campsite reports via:
+- ✅ Email: reportpdx@portlandoregon.gov (what we use - reliable & automatable)
+- Web form (multiple pages, can't be pre-filled)
+- PDX Reporter website (similar limitations)
+- Phone: 503-823-4000
+
+Email is the **only method that can be fully automated** - the app opens your email client with everything pre-filled, you just review and send.
 
 ## 🎨 Design Decisions
 
@@ -76,7 +87,6 @@ A chat-based interface that:
 
 ## 🔮 Future Enhancements
 
-- [ ] Auto-submit to Portland's form (form automation)
 - [ ] GPS auto-location
 - [ ] Photo upload
 - [ ] Save draft reports
